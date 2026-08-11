@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://cravinadventure.github.io/twinem-visualizer/assets/og_preview.jpg">
-<link rel="stylesheet" href="style.css?v=20">
+<link rel="stylesheet" href="style.css?v=21">
 </head>
 <body>
 
@@ -28,6 +28,7 @@
 (function(){
   var g=document.getElementById('gate');
   if(localStorage.getItem('tdl_ok')==='1'){ g.remove(); return; }
+  document.body.classList.add('locked');
   var LOCK='fffa33957b13f3b7563c08c815987b2c4052e178efca19f4d4376b667c6e11a0';
   function fp(v){
     return crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)).then(function(d){
@@ -38,7 +39,7 @@
     e.preventDefault();
     var v=document.getElementById('gate-in').value.trim().toLowerCase();
     fp(v).then(function(hex){
-      if(hex===LOCK){ localStorage.setItem('tdl_ok','1'); g.classList.add('gate-out'); setTimeout(function(){g.remove();},450); }
+      if(hex===LOCK){ localStorage.setItem('tdl_ok','1'); g.classList.add('gate-out'); setTimeout(function(){g.remove(); document.body.classList.remove('locked'); if(window.__tvUnlock)window.__tvUnlock();},450); }
       else { g.classList.add('gate-no'); setTimeout(function(){g.classList.remove('gate-no');},500); }
     });
   });
@@ -149,7 +150,7 @@
     <div class="note" id="export-note"></div></div>
 </div>
 
-<script src="app.js?v=25"></script>
+<script src="app.js?v=26"></script>
 <script>
 // ---- Y2K knobs: proxy drag-rotation onto the hidden range inputs ----
 (function(){

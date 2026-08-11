@@ -467,3 +467,9 @@ canvas.smooth { image-rendering: auto; }
   .tv { padding: 12px; border-radius: 18px; }
   .tv-panel { justify-content: center; }
 }
+
+/* lock screen: the visualizer runs fullscreen behind the passcode card */
+body.locked .tvroom { visibility: hidden; }
+#lockbg { position: fixed; inset: 0; z-index: 30; overflow: hidden; background: #000;
+  display: flex; align-items: center; justify-content: center; }
+body.locked #gate { background: rgba(4,4,6,.42); backdrop-filter: blur(2px); }

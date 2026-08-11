@@ -317,7 +317,9 @@
     // composite at exact display resolution so TV lines land on whole pixels
     const wrap = out.parentElement.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    const fit = Math.min(wrap.width / ow, wrap.height / oh) || 1;
+    const locked = document.body.classList.contains('locked');
+    const fit = (locked ? Math.max(wrap.width / ow, wrap.height / oh)
+                        : Math.min(wrap.width / ow, wrap.height / oh)) || 1;
     const dw = Math.max(2, Math.round(ow * fit * dpr)), dh = Math.max(2, Math.round(oh * fit * dpr));
     if (out.width !== dw || out.height !== dh) {
       out.width = dw; out.height = dh;
@@ -514,6 +516,28 @@
   }
 
   $('demo').onclick = () => { stopCam(); loadURL('assets/twinem_stainless_loop.mp4', 'logo loop', true); };
+
+  // lock screen: fullscreen reactive background at the lock preset until the code goes in
+  const LOCK_PRESET = { scale: 14, con: 50, mid: 110, thr: 53 };
+  function applyKnobs(vals) {
+    for (const id in vals) { $(id).value = vals[id]; $(id).dispatchEvent(new Event('input')); }
+  }
+  if (document.body.classList.contains('locked')) {
+    const lockbg = document.createElement('div');
+    lockbg.id = 'lockbg';
+    lockbg.appendChild(out);
+    document.body.appendChild(lockbg);
+    applyKnobs(LOCK_PRESET);
+    W = H = 0;
+  }
+  window.__tvUnlock = () => {
+    const lockbg = document.getElementById('lockbg');
+    if (!lockbg) return;
+    document.querySelector('.canvas-wrap').appendChild(out);
+    lockbg.remove();
+    applyKnobs(DEFAULTS);
+    W = H = 0;
+  };
 
   // orientation is automatic: the window's shape decides TV vs MOBILE
   const syncOrient = () => {
