@@ -237,10 +237,13 @@
     return hexCache[s];
   }
 
+  let lastTick = 0;
   function frame() {
     requestAnimationFrame(frame);
-    frames++;
     const now = performance.now();
+    if (now - lastTick < 1000 / 30) return;   // locked to 30 fps, pixels do not need more
+    lastTick = now;
+    frames++;
     if (now - fpsT > 500) {
       $('r-fps').textContent = Math.round(frames / ((now - fpsT) / 1000)) + ' fps';
       frames = 0; fpsT = now;

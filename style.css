@@ -334,7 +334,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
   padding: 18px 22px 14px;
   color: var(--ink);
 }
-.tv-top { display: flex; justify-content: space-between; align-items: center; padding: 2px 6px 12px; }
+.tv-top { display: flex; justify-content: flex-start; align-items: center; padding: 2px 6px 12px; }
 .tv-brand { display: flex; align-items: center; gap: 10px; }
 .tv-brand .brandmark { height: 22px; }
 .tv-model { font-size: 11px; letter-spacing: 3px; color: rgba(238,240,244,.55); }
@@ -378,7 +378,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
 /* front panel */
 .tv-panel {
-  display: flex; justify-content: space-between; align-items: center; gap: 26px;
+  display: flex; justify-content: space-between; align-items: center; gap: 22px;
   padding: 16px 10px 8px; flex-wrap: wrap;
 }
 .knobs { display: flex; gap: 26px; flex-wrap: wrap; }
