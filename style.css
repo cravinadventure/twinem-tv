@@ -422,6 +422,15 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .swatch.mono i { display: block; width: 22px; height: 22px; border-radius: 2px; border: 1px solid rgba(0,0,0,.5); }
 .swatch.mono[aria-pressed="true"] { outline: 2px solid var(--signal); outline-offset: 1px; transform: translateY(2px); }
 
+/* now playing */
+.nowplaying {
+  text-align: center; padding: 12px 6px 2px;
+  font-size: 10px; letter-spacing: 3px;
+  color: rgba(238,240,244,.35);
+  transition: color .4s, text-shadow .4s;
+}
+.nowplaying.live { color: var(--signal); text-shadow: 0 0 8px rgba(228,23,94,.55); }
+
 /* foot readout */
 .tv-foot { padding: 10px 8px 2px; border-top: 1px solid rgba(255,255,255,.07); margin-top: 10px; }
 .readout-line { display: flex; gap: 22px; font-size: 10px; letter-spacing: 1px; color: rgba(238,240,244,.45); text-transform: uppercase; }

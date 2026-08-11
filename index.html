@@ -75,6 +75,7 @@
       <div class="pixelrow">
         <div class="swatches" id="swatches"></div>
       </div>
+      <div class="nowplaying" id="nowplaying">&#9834; GIMME WHAT I WANT &middot; TWINEM</div>
     </div>
 
 
@@ -185,6 +186,11 @@
     if (on) { au.pause(); btn.setAttribute('aria-pressed','false'); }
     else { btn.setAttribute('aria-pressed','true'); au.play().catch(function(){}); }
   };
+  var np = document.getElementById('nowplaying');
+  if (np) {
+    au.addEventListener('play', function(){ np.classList.add('live'); });
+    au.addEventListener('pause', function(){ np.classList.remove('live'); });
+  }
 })();
 </script>
 <script>
