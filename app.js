@@ -71,17 +71,17 @@
   // slider values are stored raw (as the input element sees them), so a
   // preset is just a set of DOM values plus the non-slider toggles.
   const PRESETS = [
-    ['Default', { algo: 'bayer8', diff: 86, blur: 0, scale: 4, con: 110, mid: 84, thr: 50, serp: false, inv: false, pal: 0 },
+    ['Default', { algo: 'bayer8', diff: 86, blur: 0, scale: 1, con: 79, mid: 73, thr: 50, serp: false, inv: false, pal: 0 },
       'The saved look, and what the app loads with. Bayer 8x8 at 4px cells: an ordered grid, so it holds perfectly still frame to frame instead of boiling. Reset returns here too.']
   ];
 
   // must match the value attributes in index.html
-  const DEFAULTS = { diff: 86, blur: 0, scale: 4, con: 110, mid: 84, thr: 50, hold: 1 };
+  const DEFAULTS = { diff: 86, blur: 0, scale: 1, con: 79, mid: 73, thr: 50, hold: 1 };
   const DEFAULT_ALGO = 'bayer8';
 
   const S = {
     algo: DEFAULT_ALGO, diff: .86, blur: 0, serp: false,
-    scale: 4, con: 1.10, mid: .84, thr: .5, inv: false,
+    scale: 1, con: .79, mid: .73, thr: .5, inv: false,
     hold: 1, pal: 0, mode: 'demo', exporting: false
   };
 
