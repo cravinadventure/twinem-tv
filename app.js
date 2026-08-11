@@ -82,6 +82,7 @@
   const S = {
     algo: DEFAULT_ALGO, diff: .86, blur: 0, serp: false,
     scale: 8, con: .79, mid: .73, thr: .5, inv: false,
+    star: true, lines: false,
     orient: matchMedia('(orientation: portrait)').matches ? 'port' : 'land',
     hold: 1, pal: 0, fgc: '#FFFFFF', bgc: '#000000', mode: 'demo', exporting: false
   };
@@ -264,23 +265,42 @@
     const cell = Math.max(2, Math.min(24, Math.round(1600 / W)));
     const ow = W * cell, oh = H * cell;
     if (out.width !== ow || out.height !== oh) { out.width = ow; out.height = oh; }
-    if (glyph.width !== ow || glyph.height !== oh) { glyph.width = ow; glyph.height = oh; }
     if (bit.width !== W || bit.height !== H) { bit.width = W; bit.height = H; bitImg = bctx.createImageData(W, H); }
     const d = bitImg.data;
-    for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
-      d[p] = 255; d[p + 1] = 255; d[p + 2] = 255; d[p + 3] = lum[i] ? 255 : 0;
+    out.classList.toggle('smooth', !S.star);
+    if (S.star) {
+      if (glyph.width !== ow || glyph.height !== oh) { glyph.width = ow; glyph.height = oh; }
+      for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
+        d[p] = 255; d[p + 1] = 255; d[p + 2] = 255; d[p + 3] = lum[i] ? 255 : 0;
+      }
+      bctx.putImageData(bitImg, 0, 0);
+      gctx.clearRect(0, 0, ow, oh);
+      gctx.fillStyle = ensurePattern(cell) || S.fgc;
+      gctx.fillRect(0, 0, ow, oh);
+      gctx.globalCompositeOperation = 'destination-in';
+      gctx.imageSmoothingEnabled = false;
+      gctx.drawImage(bit, 0, 0, ow, oh);
+      gctx.globalCompositeOperation = 'source-over';
+      octx.fillStyle = S.bgc;
+      octx.fillRect(0, 0, ow, oh);
+      octx.drawImage(glyph, 0, 0);
+    } else {
+      // continuous tone, tinted like sepia but in their color (white = plain B&W)
+      const fg = hex(S.fgc);
+      for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
+        const v = lum[i];
+        d[p] = fg[0] * v; d[p + 1] = fg[1] * v; d[p + 2] = fg[2] * v; d[p + 3] = 255;
+      }
+      bctx.putImageData(bitImg, 0, 0);
+      octx.imageSmoothingEnabled = true;
+      octx.drawImage(bit, 0, 0, ow, oh);
     }
-    bctx.putImageData(bitImg, 0, 0);
-    gctx.clearRect(0, 0, ow, oh);
-    gctx.fillStyle = ensurePattern(cell) || S.fgc;
-    gctx.fillRect(0, 0, ow, oh);
-    gctx.globalCompositeOperation = 'destination-in';
-    gctx.imageSmoothingEnabled = false;
-    gctx.drawImage(bit, 0, 0, ow, oh);
-    gctx.globalCompositeOperation = 'source-over';
-    octx.fillStyle = S.bgc;
-    octx.fillRect(0, 0, ow, oh);
-    octx.drawImage(glyph, 0, 0);
+    if (S.lines) {
+      // the TV-lines treatment, same as their scanline visuals
+      const period = Math.max(4, cell), lh = Math.max(2, Math.round(period * 0.4));
+      octx.fillStyle = 'rgba(0,0,0,.45)';
+      for (let y = 0; y < oh; y += period) octx.fillRect(0, y, ow, lh);
+    }
   }
 
   const hexCache = {};
@@ -312,7 +332,7 @@
     grab();
     boxBlur(lum, W, H, Math.round(S.blur));
     levels(lum);
-    dither(lum, W, H);
+    if (S.star) dither(lum, W, H);   // star mode is 1-bit; otherwise continuous tone
     paint();
     lastMs = performance.now() - t0;
     $('r-ms').textContent = `pass: ${lastMs.toFixed(1)} ms`;
@@ -397,6 +417,16 @@
     });
   }
   buildColorRow('', FG_OPTS, 'fgc', 'bgc');
+
+  // style toggles: star pixels and TV lines, independent, both allowed
+  const starBtn = document.getElementById('m-star'), linesBtn = document.getElementById('m-lines');
+  function syncStyles() {
+    if (starBtn) starBtn.setAttribute('aria-pressed', S.star);
+    if (linesBtn) linesBtn.setAttribute('aria-pressed', S.lines);
+  }
+  if (starBtn) starBtn.onclick = () => { S.star = !S.star; syncStyles(); if (S.mode === 'image') render(); };
+  if (linesBtn) linesBtn.onclick = () => { S.lines = !S.lines; syncStyles(); if (S.mode === 'image') render(); };
+  syncStyles();
 
   syncColorRows();
 

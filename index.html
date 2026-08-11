@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TWINEM TV</title>
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 
@@ -76,6 +76,10 @@
       </div>
       <div class="pixelrow">
         <div class="swatches" id="swatches"></div>
+        <div class="styletoggles">
+          <button class="pixelbtn" id="m-star" aria-pressed="true" title="Star pixels" aria-label="Star pixels"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c1 5 3 7 8 8-5 1-7 3-8 8-1-5-3-7-8-8 5-1 7-3 8-8z"/></svg></button>
+          <button class="pixelbtn" id="m-lines" aria-pressed="false" title="TV lines" aria-label="TV lines"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3h14v2H1zM1 7h14v2H1zM1 11h14v2H1z"/></svg></button>
+        </div>
       </div>
       <div class="channels">
         <label class="pixelbtn" for="file" title="Load a file"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3h5l2 2h7v8H1z"/></svg></label>
@@ -133,7 +137,7 @@
     <div class="note" id="export-note"></div></div>
 </div>
 
-<script src="app.js?v=7"></script>
+<script src="app.js?v=8"></script>
 <script>
 // ---- Y2K knobs: proxy drag-rotation onto the hidden range inputs ----
 (function(){

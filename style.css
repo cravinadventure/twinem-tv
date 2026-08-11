@@ -429,6 +429,8 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
 /* dots / screen color rows */
 .pixelrow { display: flex; flex-direction: column; gap: 10px; }
+.styletoggles { display: flex; gap: 10px; }
+canvas.smooth { image-rendering: auto; }
 .colorrow { display: flex; align-items: center; gap: 8px; }
 .colorrow b { font-size: 9.5px; letter-spacing: 2px; color: rgba(238,240,244,.65); width: 58px; }
 .swatch.mono {
