@@ -27,7 +27,7 @@
     const g = c.getContext('2d'), img = g.createImageData(8, 8);
     for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) {
       const on = B8[y][x] / 64 < 0.42, i = (y * 8 + x) * 4;
-      img.data[i] = 22; img.data[i + 1] = 21; img.data[i + 2] = 15;
+      img.data[i] = 228; img.data[i + 1] = 23; img.data[i + 2] = 94;   // TWINEM pink
       img.data[i + 3] = on ? 255 : 0;
     }
     g.putImageData(img, 0, 0);
