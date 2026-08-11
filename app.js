@@ -231,14 +231,52 @@
     }
   }
 
+  // every lit pixel is the TWINEM sparkle, tinted to the dot color
+  const sprite = new Image();
+  sprite.src = 'assets/twinem_pixel.png';
+  let spriteOK = false;
+  sprite.onload = () => { spriteOK = true; patFor = ''; };
+  const bit = document.createElement('canvas'), bctx = bit.getContext('2d');
+  const glyph = document.createElement('canvas'), gctx = glyph.getContext('2d');
+  let bitImg = null, pat = null, patFor = '';
+
+  function ensurePattern(cell) {
+    if (!spriteOK) return null;
+    const want = S.fgc + '@' + cell;
+    if (pat && patFor === want) return pat;
+    const t = document.createElement('canvas');
+    t.width = t.height = cell;
+    const tc = t.getContext('2d');
+    tc.drawImage(sprite, 0, 0, cell, cell);
+    tc.globalCompositeOperation = 'source-in';
+    tc.fillStyle = S.fgc;
+    tc.fillRect(0, 0, cell, cell);
+    pat = gctx.createPattern(t, 'repeat');
+    patFor = want;
+    return pat;
+  }
+
   function paint() {
-    const ink = hex(S.bgc), paper = hex(S.fgc);
-    const d = outImg.data;
+    const cell = Math.max(2, Math.min(24, Math.round(1600 / W)));
+    const ow = W * cell, oh = H * cell;
+    if (out.width !== ow || out.height !== oh) { out.width = ow; out.height = oh; }
+    if (glyph.width !== ow || glyph.height !== oh) { glyph.width = ow; glyph.height = oh; }
+    if (bit.width !== W || bit.height !== H) { bit.width = W; bit.height = H; bitImg = bctx.createImageData(W, H); }
+    const d = bitImg.data;
     for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
-      const c = lum[i] ? paper : ink;
-      d[p] = c[0]; d[p + 1] = c[1]; d[p + 2] = c[2]; d[p + 3] = 255;
+      d[p] = 255; d[p + 1] = 255; d[p + 2] = 255; d[p + 3] = lum[i] ? 255 : 0;
     }
-    octx.putImageData(outImg, 0, 0);
+    bctx.putImageData(bitImg, 0, 0);
+    gctx.clearRect(0, 0, ow, oh);
+    gctx.fillStyle = ensurePattern(cell) || S.fgc;
+    gctx.fillRect(0, 0, ow, oh);
+    gctx.globalCompositeOperation = 'destination-in';
+    gctx.imageSmoothingEnabled = false;
+    gctx.drawImage(bit, 0, 0, ow, oh);
+    gctx.globalCompositeOperation = 'source-over';
+    octx.fillStyle = S.bgc;
+    octx.fillRect(0, 0, ow, oh);
+    octx.drawImage(glyph, 0, 0);
   }
 
   const hexCache = {};

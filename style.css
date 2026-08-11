@@ -419,7 +419,10 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .pixelrow { display: flex; flex-direction: column; gap: 10px; }
 .colorrow { display: flex; align-items: center; gap: 8px; }
 .colorrow b { font-size: 9.5px; letter-spacing: 2px; color: rgba(238,240,244,.65); width: 58px; }
-.swatch.mono { padding: 9px 14px; line-height: 0; }
+.swatch.mono {
+  width: auto; height: auto; display: block; border: 0;
+  padding: 9px 14px; line-height: 0;
+}
 .swatch.mono i { display: block; width: 17px; height: 17px; border-radius: 2px; border: 1px solid rgba(0,0,0,.5); }
 
 
