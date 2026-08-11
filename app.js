@@ -422,7 +422,8 @@
     clearTimeout(rzT);
     rzT = setTimeout(() => followMq({ matches: innerHeight > innerWidth }), 120);
   });
-  syncOrient();
+  addEventListener('orientationchange', () => followMq({ matches: innerHeight > innerWidth }));
+  followMq({ matches: innerHeight > innerWidth });
 
   function loadURL(url, label, isVideo, serverPath) {
     stopCam();

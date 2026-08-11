@@ -371,7 +371,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 }
 .tv-screen .canvas-wrap {
   background: #000; border: 0; display: flex; align-items: center; justify-content: center;
-  aspect-ratio: 16 / 9; max-height: 62vh;
+  width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; flex: none;
 }
 .tv-screen .canvas-wrap canvas { max-width: 100%; max-height: 100%; }
 .tv-screen::after {  /* glass glare */
@@ -443,7 +443,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 }
 /* portrait: the whole chassis becomes a phone */
 .tv.portrait { width: min(430px, 96vw); border-radius: 34px; padding: 16px 14px 12px; }
-.tv.portrait .tv-screen .canvas-wrap { aspect-ratio: 9 / 16; max-height: 46vh; flex: 0 0 auto; width: auto; margin: 0 auto; }
+.tv.portrait .tv-screen .canvas-wrap { height: 54vh; width: calc(54vh * 9 / 16); max-width: 100%; aspect-ratio: auto; flex: none; margin: 0 auto; }
 .tv.portrait .tv-panel { flex-direction: column; justify-content: center; gap: 14px; padding-top: 14px; }
 .tv.portrait .knobs { gap: 14px; justify-content: center; }
 .tv.portrait .knob { width: 46px; height: 46px; }

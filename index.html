@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TWINEM TV</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -123,7 +123,7 @@
     <div class="note" id="export-note"></div></div>
 </div>
 
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 <script>
 // ---- Y2K knobs: proxy drag-rotation onto the hidden range inputs ----
 (function(){
@@ -174,13 +174,15 @@
   var au = document.getElementById('tvaudio'), btn = document.getElementById('sound');
   if (!au) return;
   au.volume = 0.65;
+  au.load();                                   // start fetching the track right now
+  au.play().catch(function(){});               // if the browser allows it, music is instant
   function tryStart(e){
     if (e.target.closest && e.target.closest('#transport')) return;
     if (au.paused && btn.getAttribute('aria-pressed') === 'true') au.play().catch(function(){});
     document.removeEventListener('pointerdown', tryStart);
   }
-  document.addEventListener('pointerdown', tryStart);
-  document.addEventListener('keydown', tryStart);
+  document.addEventListener('pointerdown', tryStart, true);
+  document.addEventListener('keydown', tryStart, true);
   btn.onclick = function(){
     var on = btn.getAttribute('aria-pressed') === 'true';
     if (on) { au.pause(); btn.setAttribute('aria-pressed','false'); }
