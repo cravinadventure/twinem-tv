@@ -312,3 +312,123 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 #gate-form button { background: var(--signal); color: #160409; border: none;
   font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 1px;
   text-transform: uppercase; padding: 8px 16px; cursor: pointer; }
+
+/* =================== Y2K DITHER·TV =================== */
+.tvroom {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 28px 16px; font-family: var(--mono);
+  background:
+    radial-gradient(1100px 600px at 50% -10%, rgba(228,23,94,.08), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 4px),
+    var(--paper);
+}
+.tv {
+  width: min(1080px, 96vw);
+  background: linear-gradient(180deg, #23252e, #14161c 55%, #0e1015);
+  border: 2px solid #000;
+  border-radius: 26px;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.14),
+    inset 0 -3px 0 rgba(0,0,0,.6),
+    0 24px 60px rgba(0,0,0,.7);
+  padding: 18px 22px 14px;
+  color: var(--ink);
+}
+.tv-top { display: flex; justify-content: space-between; align-items: center; padding: 2px 6px 12px; }
+.tv-brand { display: flex; align-items: center; gap: 10px; }
+.tv-brand .brandmark { height: 22px; }
+.tv-model { font-size: 11px; letter-spacing: 3px; color: rgba(238,240,244,.55); }
+.channels { display: flex; gap: 10px; }
+
+/* chunky 3D pixel buttons */
+.pixelbtn, .swatch.mono {
+  font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--ink); background: linear-gradient(180deg, #2c2f3a, #1b1e26);
+  border: 0; border-radius: 4px; padding: 9px 14px; cursor: pointer;
+  box-shadow:
+    inset 2px 2px 0 rgba(255,255,255,.18),
+    inset -2px -2px 0 rgba(0,0,0,.65),
+    0 3px 0 #000;
+  transform: translateY(0); transition: none;
+}
+.pixelbtn:active, .pixelbtn[aria-pressed="true"] {
+  box-shadow: inset 2px 2px 0 rgba(0,0,0,.65), inset -2px -2px 0 rgba(255,255,255,.08);
+  transform: translateY(2px);
+  color: var(--signal);
+}
+
+/* the tube */
+.tv-screen {
+  position: relative; border-radius: 18px; overflow: hidden;
+  border: 3px solid #000; background: #000;
+  box-shadow:
+    inset 0 0 0 3px #2a2d38,
+    inset 0 0 40px rgba(0,0,0,.9);
+}
+.tv-screen .canvas-wrap {
+  background: #000; border: 0; display: flex; align-items: center; justify-content: center;
+  aspect-ratio: 16 / 9; max-height: 62vh;
+}
+.tv-screen .canvas-wrap canvas { max-width: 100%; max-height: 100%; }
+.tv-screen::after {  /* glass glare */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 90% at 30% 8%, rgba(255,255,255,.07), transparent 45%);
+  border-radius: 15px;
+}
+
+/* front panel */
+.tv-panel {
+  display: flex; justify-content: space-between; align-items: center; gap: 26px;
+  padding: 16px 10px 8px; flex-wrap: wrap;
+}
+.knobs { display: flex; gap: 26px; flex-wrap: wrap; }
+.knobunit { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.knobunit b { font-size: 9.5px; letter-spacing: 2px; color: rgba(238,240,244,.65); }
+.knobunit i { font-style: normal; font-size: 10.5px; color: var(--signal); }
+.knob {
+  width: 58px; height: 58px; border-radius: 50%; cursor: ns-resize; touch-action: none;
+  background:
+    radial-gradient(circle at 34% 30%, #3a3e4c, #191c24 62%, #0c0e13);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.2),
+    inset 0 -3px 4px rgba(0,0,0,.7),
+    0 4px 0 #000, 0 6px 10px rgba(0,0,0,.5);
+  position: relative;
+}
+.knob::before {  /* tick ring */
+  content: ""; position: absolute; inset: -7px; border-radius: 50%;
+  background: repeating-conic-gradient(rgba(238,240,244,.28) 0deg 2deg, transparent 2deg 24deg);
+  -webkit-mask: radial-gradient(circle, transparent 62%, #000 63%, #000 70%, transparent 71%);
+          mask: radial-gradient(circle, transparent 62%, #000 63%, #000 70%, transparent 71%);
+}
+.knob .ind {
+  position: absolute; inset: 0; transform: rotate(-135deg);
+}
+.knob .ind::before {
+  content: ""; position: absolute; left: 50%; top: 5px; width: 4px; height: 16px;
+  margin-left: -2px; border-radius: 2px; background: var(--signal);
+  box-shadow: 0 0 6px rgba(228,23,94,.8);
+}
+
+/* dots / screen color rows */
+.pixelrow { display: flex; flex-direction: column; gap: 10px; }
+.colorrow { display: flex; align-items: center; gap: 8px; }
+.colorrow b { font-size: 9.5px; letter-spacing: 2px; color: rgba(238,240,244,.65); width: 58px; }
+.swatch.mono { padding: 5px; line-height: 0; }
+.swatch.mono i { display: block; width: 22px; height: 22px; border-radius: 2px; border: 1px solid rgba(0,0,0,.5); }
+.swatch.mono[aria-pressed="true"] { outline: 2px solid var(--signal); outline-offset: 1px; transform: translateY(2px); }
+
+/* foot readout */
+.tv-foot { padding: 10px 8px 2px; border-top: 1px solid rgba(255,255,255,.07); margin-top: 10px; }
+.readout-line { display: flex; gap: 22px; font-size: 10px; letter-spacing: 1px; color: rgba(238,240,244,.45); text-transform: uppercase; }
+
+/* transport rides the bottom of the tube */
+.tv-screen .transport {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: rgba(10,11,14,.82); backdrop-filter: blur(4px);
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+@media (max-width: 760px) {
+  .tv { padding: 12px; border-radius: 18px; }
+  .tv-panel { justify-content: center; }
+}

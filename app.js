@@ -82,7 +82,7 @@
   const S = {
     algo: DEFAULT_ALGO, diff: .86, blur: 0, serp: false,
     scale: 1, con: .79, mid: .73, thr: .5, inv: false,
-    hold: 1, pal: 0, mode: 'demo', exporting: false
+    hold: 1, pal: 0, fgc: '#FFFFFF', bgc: '#000000', mode: 'demo', exporting: false
   };
 
   let video = null, stream = null, image = null;
@@ -222,7 +222,7 @@
   }
 
   function paint() {
-    const ink = hex(PALETTES[S.pal][1]), paper = hex(PALETTES[S.pal][2]);
+    const ink = hex(S.bgc), paper = hex(S.fgc);
     const d = outImg.data;
     for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
       const c = lum[i] ? paper : ink;
@@ -305,19 +305,43 @@
   });
   $('algo-note').textContent = NOTES[S.algo];
 
-  PALETTES.forEach((p, i) => {
-    const b = document.createElement('button');
-    b.className = 'swatch'; b.title = p[0];
-    b.setAttribute('aria-label', p[0]);
-    b.setAttribute('aria-pressed', i === 0);
-    b.innerHTML = `<i style="background:${p[1]}"></i><i style="background:${p[2]}"></i>`;
-    b.onclick = () => {
-      S.pal = i;
-      [...sw.children].forEach((c, j) => c.setAttribute('aria-pressed', i === j));
-      if (S.mode === 'image') render();
-    };
-    sw.appendChild(b);
-  });
+  // primary = the dots, secondary = the background. Never the same color:
+  // picking a conflict swaps the two.
+  const COLORS = [['Black', '#000000'], ['White', '#FFFFFF'], ['Pink', '#E4175E'], ['Teal', '#3AC0C3']];
+  const FG_OPTS = ['#FFFFFF', '#E4175E', '#3AC0C3'];
+  const BG_OPTS = ['#000000', '#FFFFFF', '#E4175E', '#3AC0C3'];
+  function buildColorRow(label, opts, key, otherKey) {
+    const row = document.createElement('div');
+    row.className = 'colorrow';
+    const cap = document.createElement('b');
+    cap.textContent = label;
+    row.appendChild(cap);
+    opts.forEach(hexv => {
+      const b = document.createElement('button');
+      b.className = 'swatch mono';
+      b.title = (COLORS.find(c => c[1] === hexv) || ['?'])[0];
+      b.dataset.c = hexv;
+      b.innerHTML = `<i style="background:${hexv}"></i>`;
+      b.onclick = () => {
+        if (S[otherKey] === hexv) { S[otherKey] = S[key]; }  // swap, never equal
+        S[key] = hexv;
+        syncColorRows();
+        if (S.mode === 'image') render();
+      };
+      row.appendChild(b);
+    });
+    sw.appendChild(row);
+  }
+  function syncColorRows() {
+    [...sw.querySelectorAll('.colorrow')].forEach((row, ri) => {
+      const key = ri === 0 ? 'fgc' : 'bgc';
+      [...row.querySelectorAll('.swatch')].forEach(b =>
+        b.setAttribute('aria-pressed', b.dataset.c === S[key]));
+    });
+  }
+  buildColorRow('DOTS', FG_OPTS, 'fgc', 'bgc');
+  buildColorRow('SCREEN', BG_OPTS, 'bgc', 'fgc');
+  syncColorRows();
 
   PRESETS.forEach(([name, p, note]) => {
     const b = document.createElement('button');
@@ -332,8 +356,7 @@
       $('algo').value = p.algo; $('algo').dispatchEvent(new Event('change'));
       $('serp').checked = p.serp; S.serp = p.serp;
       $('inv').checked = p.inv; S.inv = p.inv;
-      S.pal = p.pal;
-      [...sw.children].forEach((c, j) => c.setAttribute('aria-pressed', j === p.pal));
+      S.fgc = '#FFFFFF'; S.bgc = '#000000'; syncColorRows();
       applying = false;
       [...pr.children].forEach(c => c.setAttribute('aria-pressed', c === b));
       $('preset-note').textContent = note;
@@ -446,7 +469,7 @@
     $('algo').value = DEFAULT_ALGO; $('algo').dispatchEvent(new Event('change'));
     $('serp').checked = false; S.serp = false;
     $('inv').checked = false; S.inv = false;
-    S.pal = 0;
+    S.fgc = '#FFFFFF'; S.bgc = '#000000'; syncColorRows();
     [...sw.children].forEach((c, j) => c.setAttribute('aria-pressed', j === 0));
     applying = false;
     markPreset(0);

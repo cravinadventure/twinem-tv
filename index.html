@@ -30,170 +30,127 @@
 })();
 </script>
 
-<div class="lab">
-  <div class="stage">
-    <div class="stage-bar">
-      <div class="wordmark"><img src="assets/twinem_wordmark.png" alt="TWINEM" class="brandmark"> <span>/ dither lab</span></div>
-      <label class="filebtn" for="file">Open file</label>
-      <input id="file" type="file" accept="image/*,video/*" hidden>
-      <button id="cam">Webcam</button>
-      <button id="demo" aria-pressed="true">Logo loop</button>
-    </div>
-    <div class="canvas-wrap"><canvas id="out"></canvas></div>
-
-    <div class="transport" id="transport" hidden>
-      <button id="play" aria-label="Play or pause">Play</button>
-      <span class="slider scrub">
-        <span class="track"><span class="fill"></span></span>
-        <input id="seek" type="range" min="0" max="10000" value="0" step="1" aria-label="Position">
-      </span>
-      <span class="tc"><b id="tc-cur">0:00.00</b> <span class="tc-sep">/</span> <span id="tc-dur">0:00.00</span></span>
-    </div>
-
-    <div class="progress" id="progress" hidden>
-      <span class="bar"><span class="bar-fill" id="bar-fill"></span></span>
-      <span id="prog-text">Exporting</span>
-      <button id="cancel">Cancel</button>
-    </div>
-
-    <div class="readout">
-      <span id="r-src">source: logo loop</span>
-      <span id="r-res">grid: 0 x 0</span>
-      <span id="r-ms">pass: 0.0 ms</span>
-      <span id="r-fps">0 fps</span>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="group" hidden>
-      <div class="group-label">Look</div>
-      <div class="btn-grid" id="presets"></div>
-      <div class="note" id="preset-note">Sets every control below at once. Click it to get back to the saved look after tuning.</div>
-    </div>
-
-    <div class="group" hidden>
-      <div class="group-label">Algorithm</div>
-      <select id="algo">
-        <optgroup label="Error diffusion">
-          <option value="fs">Floyd-Steinberg</option>
-          <option value="atkinson">Atkinson</option>
-          <option value="jarvis">Jarvis-Judice-Ninke</option>
-          <option value="stucki">Stucki</option>
-          <option value="burkes">Burkes</option>
-          <option value="sierra">Sierra</option>
-          <option value="sierra-lite">Sierra Lite</option>
-        </optgroup>
-        <optgroup label="Ordered">
-          <option value="bayer4">Bayer 4x4</option>
-          <option value="bayer8" selected>Bayer 8x8</option>
-        </optgroup>
-        <optgroup label="Other">
-          <option value="noise">Random noise</option>
-          <option value="none">Hard threshold</option>
-        </optgroup>
-      </select>
-      <div class="note" id="algo-note"></div>
-    </div>
-
-    <div class="group" hidden>
-      <div class="group-label">Worming</div>
-      <label class="row">
-        <span class="row-head"><b>Diffusion</b><i id="v-diff">86%</i></span>
-        <span class="slider"><span class="track"><span class="fill"></span></span>
-          <input id="diff" type="range" min="0" max="200" value="86"></span>
-      </label>
-      <label class="row">
-        <span class="row-head"><b>Smoothness</b><i id="v-blur">0.0</i></span>
-        <span class="slider"><span class="track"><span class="fill"></span></span>
-          <input id="blur" type="range" min="0" max="400" value="0"></span>
-      </label>
-      <label class="toggle"><input id="serp" type="checkbox"><span class="box"></span>Serpentine scan</label>
-      <div class="note">Serpentine off plus diffusion above 100% is what grows the snakes. Blur first, always: worms only form in smooth gradients.</div>
-    </div>
-
-    <div class="group">
-      <div class="group-label">Levels</div>
-      <label class="row">
-        <span class="row-head"><b>Scale</b><i id="v-scale">1 px</i></span>
-        <span class="slider"><span class="track"><span class="fill"></span></span>
-          <input id="scale" type="range" min="1" max="16" value="1"></span>
-      </label>
-      <label class="row">
-        <span class="row-head"><b>Contrast</b><i id="v-con">0.79</i></span>
-        <span class="slider"><span class="track"><span class="fill"></span></span>
-          <input id="con" type="range" min="0" max="300" value="79"></span>
-      </label>
-      <label class="row">
-        <span class="row-head"><b>Midtones</b><i id="v-mid">0.73</i></span>
-        <span class="slider"><span class="track"><span class="fill"></span></span>
-          <input id="mid" type="range" min="20" max="300" value="73"></span>
-      </label>
-      <label class="row">
-        <span class="row-head"><b>Threshold</b><i id="v-thr">0.50</i></span>
-        <span class="slider"><span class="track"><span class="fill"></span></span>
-          <input id="thr" type="range" min="0" max="100" value="50"></span>
-      </label>
-      <label class="toggle"><input id="inv" type="checkbox"><span class="box"></span>Invert</label>
-    </div>
-
-    <div class="group">
-      <div class="group-label">Palette</div>
-      <div class="swatches" id="swatches"></div>
-    </div>
-
-    <div class="group" hidden>
-      <div class="group-label">Temporal</div>
-      <label class="row">
-        <span class="row-head"><b>Frame hold</b><i id="v-hold">1</i></span>
-        <span class="slider"><span class="track"><span class="fill"></span></span>
-          <input id="hold" type="range" min="1" max="6" value="1"></span>
-      </label>
-      <div class="note">Holds each dithered frame N screen frames. The pattern boils because every frame is solved independently. Dropping to 12 or 8 fps reads as intent rather than noise.</div>
-    </div>
-
-    <div class="group" hidden>
-      <div class="group-label">Export</div>
-
-      <label class="row">
-        <span class="row-head"><b>Frame rate</b><i id="v-fps">30</i></span>
-        <select id="fps">
-          <option value="23.976">23.976</option>
-          <option value="24">24</option>
-          <option value="25">25</option>
-          <option value="29.97">29.97</option>
-          <option value="30" selected>30</option>
-          <option value="50">50</option>
-          <option value="59.94">59.94</option>
-          <option value="60">60</option>
-        </select>
-      </label>
-
-      <label class="row">
-        <span class="row-head"><b>Size</b><i id="v-size">-</i></span>
-        <select id="outsize">
-          <option value="source" selected>Source resolution</option>
-          <option value="grid">Grid resolution</option>
-        </select>
-      </label>
-
-      <label class="row">
-        <span class="row-head"><b>Format</b></span>
-        <select id="codec">
-          <option value="h264" selected>MP4 / H.264</option>
-          <option value="prores">MOV / ProRes 422 HQ</option>
-        </select>
-      </label>
-
-      <div class="btn-grid three">
-        <button id="export">Export</button>
-        <button id="png">PNG</button>
-        <button id="reset">Reset</button>
+<div class="tvroom">
+  <div class="tv">
+    <div class="tv-top">
+      <div class="tv-brand"><img src="assets/twinem_wordmark.png" alt="TWINEM" class="brandmark"> <span class="tv-model">DITHER·TV</span></div>
+      <div class="channels">
+        <label class="pixelbtn" for="file">FILE</label>
+        <input id="file" type="file" accept="image/*,video/*" hidden>
+        <button class="pixelbtn" id="cam">CAM</button>
+        <button class="pixelbtn" id="demo" aria-pressed="true">LOOP</button>
       </div>
-      <div class="note" id="export-note">Export runs the whole clip start to finish, seeking one frame at a time and piping each dithered frame into ffmpeg. Not a live capture, so it never drops a frame.</div>
+    </div>
+
+    <div class="stage tv-screen">
+      <div class="canvas-wrap"><canvas id="out"></canvas></div>
+
+      <div class="transport" id="transport" hidden>
+        <button id="play" aria-label="Play or pause">Play</button>
+        <span class="slider scrub">
+          <span class="track"><span class="fill"></span></span>
+          <input id="seek" type="range" min="0" max="10000" value="0" step="1" aria-label="Position">
+        </span>
+        <span class="tc"><b id="tc-cur">0:00.00</b> <span class="tc-sep">/</span> <span id="tc-dur">0:00.00</span></span>
+      </div>
+
+      <div class="progress" id="progress" hidden>
+        <span class="bar"><span class="bar-fill" id="bar-fill"></span></span>
+        <span id="prog-text">Exporting</span>
+        <button id="cancel">Cancel</button>
+      </div>
+    </div>
+
+    <div class="tv-panel">
+      <div class="knobs">
+        <div class="knobunit"><div class="knob" data-input="scale" data-fmt="px"><div class="ind"></div></div><b>SCALE</b><i id="k-scale">1 px</i></div>
+        <div class="knobunit"><div class="knob" data-input="con" data-fmt="dec"><div class="ind"></div></div><b>CONTRAST</b><i id="k-con">0.79</i></div>
+        <div class="knobunit"><div class="knob" data-input="mid" data-fmt="dec"><div class="ind"></div></div><b>MIDTONES</b><i id="k-mid">0.73</i></div>
+        <div class="knobunit"><div class="knob" data-input="thr" data-fmt="dec"><div class="ind"></div></div><b>THRESHOLD</b><i id="k-thr">0.50</i></div>
+      </div>
+      <div class="pixelrow">
+        <div class="swatches" id="swatches"></div>
+      </div>
+    </div>
+
+    <div class="tv-foot">
+      <span class="readout-line"><span id="r-src">source: logo loop</span> <span id="r-res">grid: 0 x 0</span> <span id="r-ms">pass: 0.0 ms</span> <span id="r-fps">0 fps</span></span>
     </div>
   </div>
 </div>
 
+<!-- engine dependencies: hidden but fully functional -->
+<div class="panel" hidden>
+  <div class="group"><div class="group-label">Look</div>
+    <div class="btn-grid" id="presets"></div><div class="note" id="preset-note"></div></div>
+  <div class="group"><div class="group-label">Algorithm</div>
+    <select id="algo">
+      <optgroup label="Ordered"><option value="bayer8" selected>Bayer 8x8</option><option value="bayer4">Bayer 4x4</option></optgroup>
+      <optgroup label="Error diffusion"><option value="fs">Floyd-Steinberg</option><option value="atkinson">Atkinson</option><option value="jarvis">Jarvis-Judice-Ninke</option><option value="stucki">Stucki</option><option value="burkes">Burkes</option><option value="sierra">Sierra</option><option value="sierra-lite">Sierra Lite</option></optgroup>
+      <optgroup label="Other"><option value="noise">Random noise</option><option value="none">Hard threshold</option></optgroup>
+    </select><div class="note" id="algo-note"></div></div>
+  <div class="group"><div class="group-label">Worming</div>
+    <label class="row"><span class="row-head"><b>Diffusion</b><i id="v-diff">86%</i></span>
+      <span class="slider"><span class="track"><span class="fill"></span></span><input id="diff" type="range" min="0" max="200" value="86"></span></label>
+    <label class="row"><span class="row-head"><b>Smoothness</b><i id="v-blur">0.0</i></span>
+      <span class="slider"><span class="track"><span class="fill"></span></span><input id="blur" type="range" min="0" max="400" value="0"></span></label>
+    <label class="toggle"><input id="serp" type="checkbox"><span class="box"></span>Serpentine scan</label>
+    <label class="toggle"><input id="inv" type="checkbox"><span class="box"></span>Invert</label></div>
+  <div class="group"><div class="group-label">Levels</div>
+    <label class="row"><span class="row-head"><b>Scale</b><i id="v-scale">1 px</i></span>
+      <span class="slider"><span class="track"><span class="fill"></span></span><input id="scale" type="range" min="1" max="16" value="1"></span></label>
+    <label class="row"><span class="row-head"><b>Contrast</b><i id="v-con">0.79</i></span>
+      <span class="slider"><span class="track"><span class="fill"></span></span><input id="con" type="range" min="0" max="300" value="79"></span></label>
+    <label class="row"><span class="row-head"><b>Midtones</b><i id="v-mid">0.73</i></span>
+      <span class="slider"><span class="track"><span class="fill"></span></span><input id="mid" type="range" min="20" max="300" value="73"></span></label>
+    <label class="row"><span class="row-head"><b>Threshold</b><i id="v-thr">0.50</i></span>
+      <span class="slider"><span class="track"><span class="fill"></span></span><input id="thr" type="range" min="0" max="100" value="50"></span></label></div>
+  <div class="group"><div class="group-label">Temporal</div>
+    <label class="row"><span class="row-head"><b>Frame hold</b><i id="v-hold">1</i></span>
+      <span class="slider"><span class="track"><span class="fill"></span></span><input id="hold" type="range" min="1" max="6" value="1"></span></label></div>
+  <div class="group"><div class="group-label">Export</div>
+    <label class="row"><span class="row-head"><b>Frame rate</b><i id="v-fps">30</i></span>
+      <select id="fps"><option value="30" selected>30</option><option value="24">24</option><option value="60">60</option></select></label>
+    <label class="row"><span class="row-head"><b>Size</b><i id="v-size">-</i></span>
+      <select id="outsize"><option value="source" selected>Source resolution</option><option value="grid">Grid resolution</option></select></label>
+    <label class="row"><span class="row-head"><b>Format</b></span>
+      <select id="codec"><option value="h264" selected>MP4 / H.264</option><option value="prores">MOV / ProRes 422 HQ</option></select></label>
+    <div class="btn-grid three"><button id="export">Export</button><button id="png">PNG</button><button id="reset">Reset</button></div>
+    <div class="note" id="export-note"></div></div>
+</div>
+
 <script src="app.js"></script>
+<script>
+// ---- Y2K knobs: proxy drag-rotation onto the hidden range inputs ----
+(function(){
+  var FMT = {
+    px: function(v){ return v + ' px'; },
+    dec: function(v){ return (v/100).toFixed(2); }
+  };
+  document.querySelectorAll('.knob').forEach(function(k){
+    var input = document.getElementById(k.dataset.input);
+    var out = document.getElementById('k-' + k.dataset.input);
+    var min = +input.min, max = +input.max;
+    function paint(){
+      var v = +input.value, t = (v - min) / (max - min);
+      k.querySelector('.ind').style.transform = 'rotate(' + (-135 + t * 270) + 'deg)';
+      if (out) out.textContent = FMT[k.dataset.fmt](v);
+    }
+    input.addEventListener('input', paint);
+    var startY = 0, startV = 0;
+    k.addEventListener('pointerdown', function(e){
+      e.preventDefault(); k.setPointerCapture(e.pointerId);
+      startY = e.clientY; startV = +input.value;
+      function mv(ev){
+        var v = Math.round(Math.max(min, Math.min(max, startV + (startY - ev.clientY) * (max - min) / 160)));
+        if (v !== +input.value){ input.value = v; input.dispatchEvent(new Event('input')); }
+      }
+      function up(){ k.removeEventListener('pointermove', mv); k.removeEventListener('pointerup', up); }
+      k.addEventListener('pointermove', mv); k.addEventListener('pointerup', up);
+    });
+    paint();
+  });
+})();
+</script>
 </body>
 </html>
