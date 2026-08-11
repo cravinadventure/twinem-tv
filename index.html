@@ -70,6 +70,7 @@
         <button class="pixelbtn" id="cam" title="Camera" aria-label="Camera"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M1 4h4l1-2h4l1 2h4v9H1zM8 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg></button>
         <button class="pixelbtn" id="demo" aria-pressed="true" title="Logo loop" aria-label="Logo loop"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4z" /><path d="M8 0l4.5 2.5L8 5.5z"/></svg></button>
         <button class="pixelbtn" id="sound" aria-pressed="false" title="Music" aria-label="Music"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l8-1.6v9.1a2.5 2.5 0 1 1-1.5-2.3V4.2L7.5 5.2v7.3A2.5 2.5 0 1 1 6 10.2z"/></svg></button>
+        <button class="pixelbtn" id="rec" title="Record" aria-label="Record"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5"/></svg></button>
         <button class="pixelbtn" id="orient" title="Orientation" aria-label="Orientation"><svg class="ic-land" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4.5" width="12" height="7" fill="none" stroke="currentColor" stroke-width="2"/></svg><svg class="ic-port" viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="2" width="7" height="12" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
       </div>
       <div class="pixelrow">
@@ -203,11 +204,13 @@
       analyser.fftSize = 1024;             // ~43 Hz per bin: fine enough to see the kick itself
       analyser.smoothingTimeConstant = 0.15; // fast attack, no smear
       src.connect(analyser); analyser.connect(ctx.destination);
+      window.__tvAudioGraph = { ctx: ctx, src: src };
       data = new Uint8Array(analyser.frequencyBinCount);
       if (ctx.state === 'suspended') ctx.resume().catch(function(){});
       setInterval(tick, 33);
     } catch (e) { ctx = null; }
   }
+  window.__tvAudioSetup = setup;
   // build the graph inside a real user gesture, whichever comes first
   document.addEventListener('pointerdown', setup);
   document.addEventListener('keydown', setup);
@@ -228,6 +231,46 @@
     var target = Math.round(base + (150 - base) * pulse);
     if (target !== +mid.value){ self = true; mid.value = target; mid.dispatchEvent(new Event('input')); self = false; }
   }
+})();
+</script>
+<script>
+// ---- record: canvas + music bus -> mp4 (click to start, click to stop) ----
+(function(){
+  var btn = document.getElementById('rec'), canvas = document.getElementById('out');
+  if (!btn || !canvas) return;
+  var mr = null, chunks = [];
+  btn.onclick = function(){
+    if (mr) { mr.stop(); return; }
+    if (window.__tvAudioSetup) window.__tvAudioSetup();
+    var stream = canvas.captureStream(30);
+    var g = window.__tvAudioGraph;
+    if (g) {
+      if (!g.recDest) { g.recDest = g.ctx.createMediaStreamDestination(); g.src.connect(g.recDest); }
+      g.recDest.stream.getAudioTracks().forEach(function(t){ stream.addTrack(t); });
+    }
+    var mime = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm']
+      .find(function(m){ return MediaRecorder.isTypeSupported(m); }) || '';
+    chunks = [];
+    try {
+      mr = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 8000000 } : undefined);
+    } catch (e) { mr = null; return; }
+    mr.ondataavailable = function(e){ if (e.data && e.data.size) chunks.push(e.data); };
+    mr.onstop = function(){
+      var ext = (mr.mimeType || '').indexOf('mp4') > -1 ? 'mp4' : 'webm';
+      var blob = new Blob(chunks, { type: mr.mimeType });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      var d = new Date(), pad = function(n){ return (n < 10 ? '0' : '') + n; };
+      a.download = 'TWINEM_' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '_' +
+                   pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds()) + '.' + ext;
+      a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+      mr = null;
+      btn.setAttribute('aria-pressed', 'false'); btn.classList.remove('recording');
+    };
+    mr.start(250);
+    btn.setAttribute('aria-pressed', 'true'); btn.classList.add('recording');
+  };
 })();
 </script>
 </body>

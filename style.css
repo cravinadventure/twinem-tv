@@ -339,6 +339,9 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .tv-brand .brandmark { height: 38px; }
 .tv-model { font-size: 14px; letter-spacing: 4px; color: rgba(238,240,244,.55); }
 .pixelbtn svg { width: 17px; height: 17px; display: block; fill: currentColor; }
+#rec svg { fill: #ff2b46; }
+.pixelbtn.recording svg { animation: recblink 1s steps(2, start) infinite; }
+@keyframes recblink { 50% { opacity: .35; } }
 #orient .ic-port { display: none; }
 #orient[data-orient="port"] .ic-land { display: none; }
 #orient[data-orient="port"] .ic-port { display: block; }
