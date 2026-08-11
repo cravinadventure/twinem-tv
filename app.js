@@ -76,12 +76,12 @@
   ];
 
   // must match the value attributes in index.html
-  const DEFAULTS = { diff: 86, blur: 0, scale: 6, con: 79, mid: 73, thr: 50, hold: 1 };
+  const DEFAULTS = { diff: 86, blur: 0, scale: 8, con: 79, mid: 73, thr: 50, hold: 1 };
   const DEFAULT_ALGO = 'bayer8';
 
   const S = {
     algo: DEFAULT_ALGO, diff: .86, blur: 0, serp: false,
-    scale: 6, con: .79, mid: .73, thr: .5, inv: false,
+    scale: 8, con: .79, mid: .73, thr: .5, inv: false,
     orient: matchMedia('(orientation: portrait)').matches ? 'port' : 'land',
     hold: 1, pal: 0, fgc: '#FFFFFF', bgc: '#000000', mode: 'demo', exporting: false
   };
@@ -122,6 +122,7 @@
       let v = (a[i] - .5) * c + .5;
       v = v < 0 ? 0 : v > 1 ? 1 : v;
       v = Math.pow(v, g);
+      if (v < 0.06) v = 0;   // crush near-black: no lonely dots marching across dark fields
       a[i] = S.inv ? 1 - v : v;
     }
   }
