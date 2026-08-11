@@ -64,8 +64,8 @@
 
   const PALETTES = [
     ['Classic', '#000000', '#FFFFFF'],
-    ['TWINEM Pink', '#0a0b0e', '#E4175E'],
-    ['TWINEM Teal', '#0a0b0e', '#3AC0C3']
+    ['TWINEM Pink', '#000000', '#E4175E'],
+    ['TWINEM Teal', '#000000', '#3AC0C3']
   ];
 
   // slider values are stored raw (as the input element sees them), so a
