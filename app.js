@@ -457,8 +457,9 @@
     if (starBtn) starBtn.setAttribute('aria-pressed', S.star);
     if (linesBtn) linesBtn.setAttribute('aria-pressed', S.lines);
   }
-  if (starBtn) starBtn.onclick = () => { S.star = !S.star; syncStyles(); if (S.mode === 'image') render(); };
-  if (linesBtn) linesBtn.onclick = () => { S.lines = !S.lines; syncStyles(); if (S.mode === 'image') render(); };
+  // one look at a time: stars or lines, never both
+  if (starBtn) starBtn.onclick = () => { S.star = !S.star; if (S.star) S.lines = false; syncStyles(); if (S.mode === 'image') render(); };
+  if (linesBtn) linesBtn.onclick = () => { S.lines = !S.lines; if (S.lines) S.star = false; syncStyles(); if (S.mode === 'image') render(); };
   syncStyles();
 
   syncColorRows();
