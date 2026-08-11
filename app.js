@@ -196,9 +196,11 @@
     }
   }
 
-  // center-crop the source to the chosen aspect (16:9 or 9:16)
+  // landscape TV center-crops to 16:9; the portrait tube never crops,
+  // it shows the full frame centered in the middle of the 9:16 screen
   function cropRect(sw, sh) {
-    const ar = S.orient === 'port' ? 9 / 16 : 16 / 9;
+    if (S.orient === 'port') return { cw: sw, ch: sh, cx: 0, cy: 0 };
+    const ar = 16 / 9;
     let cw = sw, ch = sh;
     if (sw / sh > ar) cw = sh * ar; else ch = sw / ar;
     return { cw, ch, cx: (sw - cw) / 2, cy: (sh - ch) / 2 };

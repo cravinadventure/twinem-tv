@@ -336,10 +336,10 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
   position: relative;
 }
 .tv-top { display: flex; justify-content: center; align-items: center; padding: 4px 6px 14px; position: relative; }
-.socials { position: absolute; right: 10px; top: 2px; display: flex; gap: 14px; }
+.socials { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; gap: 16px; align-items: center; }
 .socials a { color: rgba(238,240,244,.45); display: block; }
 .socials a:hover { color: var(--signal); }
-.socials svg { width: 20px; height: 20px; fill: currentColor; display: block; }
+.socials svg { width: 25px; height: 25px; fill: currentColor; display: block; }
 .tv-brand { display: flex; align-items: center; gap: 10px; }
 .tv-brand .brandmark { height: 38px; }
 .tv-model { font-size: 14px; letter-spacing: 4px; color: rgba(238,240,244,.55); }
