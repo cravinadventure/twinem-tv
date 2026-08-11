@@ -389,7 +389,11 @@
   function setMode(m, label) {
     S.mode = m;
     $('r-src').textContent = 'source: ' + label;
-    $('demo').setAttribute('aria-pressed', m === 'demo');
+    // source buttons latch: exactly one of LOOP / CAM / FILE stays pressed
+    $('demo').setAttribute('aria-pressed', label === 'logo loop');
+    $('cam').setAttribute('aria-pressed', label === 'webcam');
+    const fileBtn = document.querySelector('label[for="file"]');
+    if (fileBtn) fileBtn.setAttribute('aria-pressed', label !== 'logo loop' && label !== 'webcam');
     W = H = 0;
     // the demo loop just loops; transport is only for footage they bring
     showTransport(m === 'video' && label !== 'logo loop' && video && isFinite(video.duration));

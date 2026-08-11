@@ -221,7 +221,10 @@
     if (drive > pulse) pulse = Math.min(1, drive);
     pulse *= 0.88;
     window.__beat = { e: e, avg: avg, pulse: pulse, state: ctx.state };
-    if (au.paused && pulse < 0.02) return;
+    if (au.paused && pulse < 0.02) {
+      if (+mid.value !== base){ self = true; mid.value = base; mid.dispatchEvent(new Event('input')); self = false; }
+      return;
+    }
     var target = Math.round(base + (150 - base) * pulse);
     if (target !== +mid.value){ self = true; mid.value = target; mid.dispatchEvent(new Event('input')); self = false; }
   }
