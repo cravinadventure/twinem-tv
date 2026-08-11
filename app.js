@@ -76,12 +76,12 @@
   ];
 
   // must match the value attributes in index.html
-  const DEFAULTS = { diff: 86, blur: 0, scale: 1, con: 79, mid: 73, thr: 50, hold: 1 };
+  const DEFAULTS = { diff: 86, blur: 0, scale: 6, con: 79, mid: 73, thr: 50, hold: 1 };
   const DEFAULT_ALGO = 'bayer8';
 
   const S = {
     algo: DEFAULT_ALGO, diff: .86, blur: 0, serp: false,
-    scale: 1, con: .79, mid: .73, thr: .5, inv: false,
+    scale: 6, con: .79, mid: .73, thr: .5, inv: false,
     orient: matchMedia('(orientation: portrait)').matches ? 'port' : 'land',
     hold: 1, pal: 0, fgc: '#FFFFFF', bgc: '#000000', mode: 'demo', exporting: false
   };
