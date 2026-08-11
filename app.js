@@ -408,6 +408,9 @@
     const syncOrient = () => {
       orientBtn.dataset.orient = S.orient;
       document.querySelector('.tv').classList.toggle('portrait', S.orient === 'port');
+      const model = document.querySelector('.tv-model');
+      if (model) model.textContent = S.orient === 'port' ? 'MOBILE' : 'TV';
+      document.title = S.orient === 'port' ? 'TWINEM MOBILE' : 'TWINEM TV';
     };
     orientBtn.onclick = () => { S.orient = S.orient === 'port' ? 'land' : 'port'; W = H = 0; syncOrient(); };
     syncOrient();
