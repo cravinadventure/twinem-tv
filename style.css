@@ -333,8 +333,20 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
     0 24px 60px rgba(0,0,0,.7);
   padding: 18px 22px 14px;
   color: var(--ink);
+  position: relative;
 }
-.tv-top { display: flex; justify-content: center; align-items: center; padding: 4px 6px 14px; }
+.tv::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: url('assets/twinem_bg_tile.png') repeat 0 0 / 176px 84px;
+  opacity: .05;
+  pointer-events: none;
+}
+.tv > * { position: relative; }
+.tv-top { display: flex; justify-content: center; align-items: center; padding: 4px 6px 14px; position: relative; }
+.socials { position: absolute; right: 10px; top: 2px; display: flex; gap: 14px; }
+.socials a { color: rgba(238,240,244,.45); display: block; }
+.socials a:hover { color: var(--signal); }
+.socials svg { width: 20px; height: 20px; fill: currentColor; display: block; }
 .tv-brand { display: flex; align-items: center; gap: 10px; }
 .tv-brand .brandmark { height: 38px; }
 .tv-model { font-size: 14px; letter-spacing: 4px; color: rgba(238,240,244,.55); }
@@ -428,7 +440,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
 /* now playing */
 .nowplaying {
-  text-align: center; padding: 12px 6px 2px;
+  text-align: right; padding: 12px 10px 2px;
   font-size: 10px; letter-spacing: 3px;
   color: rgba(238,240,244,.35);
   transition: color .4s, text-shadow .4s;
