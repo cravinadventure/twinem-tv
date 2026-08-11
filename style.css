@@ -379,7 +379,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
   background: #000; border: 0; display: flex; align-items: center; justify-content: center;
   width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; flex: none;
 }
-.tv-screen .canvas-wrap canvas { max-width: 100%; max-height: 100%; }
+.tv-screen .canvas-wrap canvas { position: static; max-width: 100%; max-height: 100%; }
 .tv-screen::after {  /* glass glare */
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(120% 90% at 30% 8%, rgba(255,255,255,.07), transparent 45%);
