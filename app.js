@@ -252,7 +252,7 @@
     requestAnimationFrame(frame);
     const now = performance.now();
     if (now - lastTick < 1000 / 30) return;   // locked to 30 fps, pixels do not need more
-    lastTick = now;
+    lastTick = Math.max(lastTick + 1000 / 30, now - 1000 / 30);   // even pacing on 60/120 Hz displays
     frames++;
     if (now - fpsT > 500) {
       $('r-fps').textContent = Math.round(frames / ((now - fpsT) / 1000)) + ' fps';
@@ -423,8 +423,7 @@
       video.src = url; video.muted = true; video.playsInline = true; video.loop = true;
       video.onloadeddata = () => {
         setMode('video', label);
-        detectFps(video);
-        video.play().catch(() => {});
+        video.play().catch(() => {});   // everything runs at a flat 30 fps, no detection
       };
       video.addEventListener('timeupdate', syncTransport);
       video.addEventListener('play', syncTransport);
