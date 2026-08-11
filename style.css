@@ -435,6 +435,7 @@ canvas.smooth { image-rendering: auto; }
 
 /* now playing */
 .nowplaying {
+  display: block; text-decoration: none; cursor: pointer;
   width: 100%; text-align: right; padding: 12px 10px 2px;
   font-size: 10px; letter-spacing: 3px;
   color: rgba(238,240,244,.35);
