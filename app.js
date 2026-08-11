@@ -326,9 +326,11 @@
   function buildColorRow(label, opts, key, otherKey) {
     const row = document.createElement('div');
     row.className = 'colorrow';
-    const cap = document.createElement('b');
-    cap.textContent = label;
-    row.appendChild(cap);
+    if (label) {
+      const cap = document.createElement('b');
+      cap.textContent = label;
+      row.appendChild(cap);
+    }
     opts.forEach(hexv => {
       const b = document.createElement('button');
       b.className = 'swatch mono';
@@ -352,7 +354,7 @@
         b.setAttribute('aria-pressed', b.dataset.c === S[key]));
     });
   }
-  buildColorRow('DOTS', FG_OPTS, 'fgc', 'bgc');
+  buildColorRow('', FG_OPTS, 'fgc', 'bgc');
 
   syncColorRows();
 
