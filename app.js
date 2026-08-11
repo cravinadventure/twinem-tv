@@ -298,9 +298,11 @@
       octx.drawImage(bit, 0, 0, ow, oh);
     }
     if (S.lines) {
-      // the TV-lines treatment, same as their scanline visuals
-      const period = Math.max(4, cell), lh = Math.max(2, Math.round(period * 0.4));
-      octx.fillStyle = 'rgba(0,0,0,.45)';
+      // matched to the og TWINEM scanline files: ~100 lines per frame height,
+      // dark band 40% of each period, pure black
+      const period = Math.max(3, Math.round(oh / 100));
+      const lh = Math.max(1, Math.round(period * 0.4));
+      octx.fillStyle = '#000';
       for (let y = 0; y < oh; y += period) octx.fillRect(0, y, ow, lh);
     }
   }
