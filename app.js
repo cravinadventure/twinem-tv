@@ -196,10 +196,8 @@
     }
   }
 
-  // landscape TV center-crops to 16:9; the portrait tube never crops,
-  // it shows the full frame centered in the middle of the 9:16 screen
+  // landscape TV center-crops the source to 16:9
   function cropRect(sw, sh) {
-    if (S.orient === 'port') return { cw: sw, ch: sh, cx: 0, cy: 0 };
     const ar = 16 / 9;
     let cw = sw, ch = sh;
     if (sw / sh > ar) cw = sh * ar; else ch = sw / ar;
@@ -212,10 +210,24 @@
     else if (S.mode === 'image' && image) { sw = image.naturalWidth; sh = image.naturalHeight; }
     else { sw = 960; sh = 540; }
 
-    const { cw, ch, cx, cy } = cropRect(sw, sh);
-    // star mode works on the chunky dither grid; smooth modes stay near source res
-    const div = S.star ? S.scale : Math.max(1, cw / 960);
-    const w = Math.max(8, Math.round(cw / div)), h = Math.max(8, Math.round(ch / div));
+    let w, h, dxx = 0, dyy = 0, dvw, dvh, cx = 0, cy = 0, cw = sw, ch = sh;
+    if (S.orient === 'port') {
+      // portrait: the working frame IS 9:16 - the source floats centered inside it,
+      // and every effect (stars, lines, color) owns the whole frame
+      let fw = sw, fh = sw * 16 / 9;
+      if (sh > fh) { fh = sh; fw = sh * 9 / 16; }
+      const div = S.star ? S.scale : Math.max(1, fw / 720);
+      w = Math.max(8, Math.round(fw / div)); h = Math.max(8, Math.round(fh / div));
+      const k = Math.min(w / sw, h / sh);
+      dvw = Math.max(1, Math.round(sw * k)); dvh = Math.max(1, Math.round(sh * k));
+      dxx = (w - dvw) >> 1; dyy = (h - dvh) >> 1;
+    } else {
+      // star mode works on the chunky dither grid; smooth modes stay near source res
+      const r = cropRect(sw, sh); cx = r.cx; cy = r.cy; cw = r.cw; ch = r.ch;
+      const div = S.star ? S.scale : Math.max(1, cw / 960);
+      w = Math.max(8, Math.round(cw / div)); h = Math.max(8, Math.round(ch / div));
+      dvw = w; dvh = h;
+    }
     if (w !== W || h !== H) {
       W = w; H = h;
       lum = new Float32Array(W * H);
@@ -229,8 +241,11 @@
 
     if (S.mode === 'demo') { fillDemo(lum, W, H, performance.now()); return; }
 
-    if (S.mirror) { sctx.save(); sctx.scale(-1, 1); sctx.drawImage(video, cx, cy, cw, ch, -W, 0, W, H); sctx.restore(); }
-    else sctx.drawImage(S.mode === 'video' ? video : image, cx, cy, cw, ch, 0, 0, W, H);
+    sctx.fillStyle = '#000';
+    sctx.fillRect(0, 0, W, H);
+    const el = S.mode === 'video' ? video : image;
+    if (S.mirror) { sctx.save(); sctx.scale(-1, 1); sctx.drawImage(el, cx, cy, cw, ch, -(dxx + dvw), dyy, dvw, dvh); sctx.restore(); }
+    else sctx.drawImage(el, cx, cy, cw, ch, dxx, dyy, dvw, dvh);
     const d = sctx.getImageData(0, 0, W, H).data;
     for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
       lum[i] = (d[p] * 0.2126 + d[p + 1] * 0.7152 + d[p + 2] * 0.0722) / 255;
