@@ -1,7 +1,12 @@
-# TWINEM / Dither Lab
+# TWINEM TV
 
-TWINEM's own passcode-locked copy of dither-lab, gifted with their visual pack (Aug 2026).
-Their colors, their stainless logo loop as the opening demo, simplified to Levels + Palette
-(classic, TWINEM pink, TWINEM teal). Locked to Bayer 8x8. Passcode: their name, lowercase.
+A Y2K television that dithers anything into TWINEM's 1-bit world. Built as a gift for the duo:
+drop in footage, go live on camera, or let their stainless logo loop spin while "Gimme What I
+Want" plays underneath. Knobs for scale, contrast, midtones (it pulses to the kick), and
+threshold; three dot colors; one red button that records the screen plus the music to MP4.
 
-Fork of ~/Projects/dither-lab with hidden (still functional) control groups.
+Portrait windows and phones get the TWINEM MOBILE chassis; landscape gets the TV.
+
+Passcode-gated. Static site, no build step - `index.html` + `app.js` + `style.css` + `assets/`.
+
+Made by Cravin' Adventure Studios.
