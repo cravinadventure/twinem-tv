@@ -1,0 +1,314 @@
+:root {
+  --paper: #0a0b0e;
+  --paper-2: #171a21;
+  --ink: #eef0f4;
+  --rule: rgba(255, 255, 255, 0.16);
+  --rule-hard: rgba(255, 255, 255, 0.42);
+  --signal: #E4175E;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  min-height: 100%;
+}
+
+.lab {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.45;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 268px;
+  height: 100vh;
+  border: 1px solid var(--rule-hard);
+}
+
+/* ---------- stage ---------- */
+
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--rule-hard);
+  min-width: 0;
+  min-height: 0;
+}
+
+.stage.drop .canvas-wrap { outline: 2px solid var(--signal); outline-offset: -6px; }
+
+.stage-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+
+.wordmark {
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 11px;
+  margin-right: auto;
+}
+.wordmark span { opacity: 0.42; font-weight: 400; }
+
+.canvas-wrap {
+  flex: 1;
+  position: relative;
+  background:
+    repeating-conic-gradient(var(--paper-2) 0% 25%, var(--paper) 0% 50%)
+    0 0 / 12px 12px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* pinned to the wrap so the flex chain never has to resolve a percentage
+   height. object-fit does the letterboxing. */
+canvas#out {
+  position: absolute;
+  top: 14px; left: 14px;
+  width: calc(100% - 28px);
+  height: calc(100% - 28px);
+  object-fit: contain;
+  image-rendering: pixelated;
+  display: block;
+}
+
+/* ---------- transport ---------- */
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--rule);
+}
+.transport[hidden] { display: none; }
+.transport #play { min-width: 62px; text-align: center; }
+
+.transport .scrub { flex: 1; min-width: 0; }
+.transport .scrub .track { height: 12px; }
+
+.tc {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tc b { font-weight: 700; }
+.tc-sep, .tc span { opacity: 0.5; }
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--rule);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+}
+.progress[hidden] { display: none; }
+.progress .bar {
+  flex: 1;
+  height: 12px;
+  border: 1px solid var(--rule-hard);
+  overflow: hidden;
+  min-width: 0;
+}
+.progress .bar-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background-image: var(--bayer);
+  background-size: 8px 8px;
+  image-rendering: pixelated;
+}
+.progress #prog-text { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.readout {
+  display: flex;
+  gap: 14px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--rule);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  flex-wrap: wrap;
+}
+
+/* ---------- controls ---------- */
+
+.panel {
+  overflow-y: auto;
+  max-height: 100vh;
+  padding-bottom: 20px;
+}
+
+.group { border-bottom: 1px solid var(--rule); padding: 11px 12px 13px; }
+
+.group-label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 9px;
+}
+
+label.row {
+  display: block;
+  margin-bottom: 9px;
+}
+label.row:last-child { margin-bottom: 0; }
+
+.row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.row-head b { font-weight: 400; }
+.row-head i { font-style: normal; opacity: 0.55; font-variant-numeric: tabular-nums; }
+
+/* signature: slider tracks filled with the tool's own bayer pattern */
+.slider {
+  position: relative;
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+.slider .track {
+  position: absolute;
+  left: 0; right: 0;
+  height: 10px;
+  border: 1px solid var(--rule-hard);
+  overflow: hidden;
+}
+.slider .fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: var(--fill, 50%);
+  background-image: var(--bayer);
+  background-size: 8px 8px;
+  image-rendering: pixelated;
+}
+.slider input {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+}
+.slider input::-webkit-slider-runnable-track { background: transparent; height: 16px; }
+.slider input::-moz-range-track { background: transparent; height: 16px; }
+.slider input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 7px; height: 16px;
+  background: var(--ink);
+  border: 0;
+  cursor: ew-resize;
+}
+.slider input::-moz-range-thumb {
+  width: 7px; height: 16px;
+  background: var(--ink);
+  border: 0; border-radius: 0;
+  cursor: ew-resize;
+}
+.slider input:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+select, button, .filebtn {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule-hard);
+  padding: 5px 7px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+select { width: 100%; text-transform: none; letter-spacing: 0; font-size: 11px; }
+button:hover, .filebtn:hover { background: var(--ink); color: var(--paper); }
+button:focus-visible, select:focus-visible, .filebtn:focus-visible {
+  outline: 2px solid var(--signal); outline-offset: 1px;
+}
+button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+.btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+#presets { grid-template-columns: 1fr; }
+.btn-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.btn-grid button, .btn-grid .filebtn { width: 100%; text-align: center; }
+
+.swatches { display: flex; gap: 5px; flex-wrap: wrap; }
+.swatch {
+  width: 26px; height: 20px;
+  border: 1px solid var(--rule-hard);
+  cursor: pointer; padding: 0;
+  display: flex;
+}
+.swatch i { flex: 1; }
+.swatch[aria-pressed="true"] { outline: 2px solid var(--signal); outline-offset: 1px; }
+
+.toggle {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; margin-bottom: 7px;
+  font-size: 10.5px; letter-spacing: 0.05em;
+}
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle .box {
+  width: 13px; height: 13px;
+  border: 1px solid var(--rule-hard);
+  flex: none;
+}
+.toggle input:checked + .box { background-image: var(--bayer); background-size: 8px 8px; }
+.toggle input:focus-visible + .box { outline: 2px solid var(--signal); outline-offset: 1px; }
+
+.note {
+  font-size: 10px; line-height: 1.5; opacity: 0.55;
+  margin-top: 8px; letter-spacing: 0.01em;
+}
+
+@media (max-width: 720px) {
+  .lab { grid-template-columns: 1fr; height: auto; }
+  .stage { border-right: 0; border-bottom: 1px solid var(--rule-hard); }
+  .panel { max-height: none; }
+  .canvas-wrap { height: 44vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+
+/* ---------- TWINEM branding ---------- */
+.brandmark { height: 18px; vertical-align: -4px; }
+
+#gate { position: fixed; inset: 0; z-index: 99; background: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); transition: opacity .4s; }
+#gate.gate-out { opacity: 0; pointer-events: none; }
+#gate.gate-no .gate-card { animation: shake .4s; }
+@keyframes shake { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+.gate-card { text-align: center; padding: 40px; border: 1px solid var(--rule-hard); background: var(--paper-2); }
+.gate-mark { width: 220px; display: block; margin: 0 auto 22px; }
+.gate-line { color: var(--ink); font-size: 13px; letter-spacing: .5px; margin: 4px 0; }
+.gate-line.dim { color: rgba(238,240,244,.5); margin-bottom: 18px; }
+#gate-form { display: flex; gap: 8px; justify-content: center; }
+#gate-in { background: var(--paper); border: 1px solid var(--rule); color: var(--ink);
+  font-family: var(--mono); font-size: 13px; padding: 8px 12px; width: 170px; }
+#gate-in:focus { outline: none; border-color: var(--signal); }
+#gate-form button { background: var(--signal); color: #160409; border: none;
+  font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 1px;
+  text-transform: uppercase; padding: 8px 16px; cursor: pointer; }
