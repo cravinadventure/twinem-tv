@@ -200,8 +200,8 @@
       ctx = new (window.AudioContext || window.webkitAudioContext)();
       var src = ctx.createMediaElementSource(au);
       analyser = ctx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.4;
+      analyser.fftSize = 1024;             // ~43 Hz per bin: fine enough to see the kick itself
+      analyser.smoothingTimeConstant = 0.15; // fast attack, no smear
       src.connect(analyser); analyser.connect(ctx.destination);
       data = new Uint8Array(analyser.frequencyBinCount);
       if (ctx.state === 'suspended') ctx.resume().catch(function(){});
@@ -215,9 +215,9 @@
   function tick(){
     if (ctx.state === 'suspended') { ctx.resume().catch(function(){}); return; }
     analyser.getByteFrequencyData(data);
-    var e = 0; for (var i = 1; i < 8; i++) e += data[i]; e /= 7;
-    avg = avg * 0.95 + e * 0.05;
-    var drive = e > 25 ? Math.max(0, e / (avg + 0.001) - 1.03) * 4 : 0;
+    var e = 0; for (var i = 1; i < 6; i++) e += data[i]; e /= 5;   // 43-258 Hz: the kick band
+    avg = avg * 0.96 + e * 0.04;
+    var drive = e > 25 ? Math.max(0, e / (avg + 0.001) - 1.08) * 5 : 0;
     if (drive > pulse) pulse = Math.min(1, drive);
     pulse *= 0.88;
     window.__beat = { e: e, avg: avg, pulse: pulse, state: ctx.state };
