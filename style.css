@@ -251,7 +251,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .btn-grid.three { grid-template-columns: 1fr 1fr 1fr; }
 .btn-grid button, .btn-grid .filebtn { width: 100%; text-align: center; }
 
-.swatches { display: flex; gap: 5px; flex-wrap: wrap; }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
 .swatch {
   width: 26px; height: 20px;
   border: 1px solid var(--rule-hard);
