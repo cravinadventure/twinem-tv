@@ -248,7 +248,10 @@
     const t = document.createElement('canvas');
     t.width = t.height = cell;
     const tc = t.getContext('2d');
-    tc.drawImage(sprite, 0, 0, cell, cell);
+    // the artwork has ~30% padding and pointed corners; overdraw so each
+    // star fills its cell like a solid pixel would
+    const F = 1.55;
+    tc.drawImage(sprite, -cell * (F - 1) / 2, -cell * (F - 1) / 2, cell * F, cell * F);
     tc.globalCompositeOperation = 'source-in';
     tc.fillStyle = S.fgc;
     tc.fillRect(0, 0, cell, cell);
