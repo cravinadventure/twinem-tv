@@ -440,7 +440,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
 /* now playing */
 .nowplaying {
-  text-align: right; padding: 12px 10px 2px;
+  width: 100%; text-align: right; padding: 12px 10px 2px;
   font-size: 10px; letter-spacing: 3px;
   color: rgba(238,240,244,.35);
   transition: color .4s, text-shadow .4s;
