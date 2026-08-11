@@ -24,7 +24,7 @@
   document.getElementById('gate-form').addEventListener('submit',function(e){
     e.preventDefault();
     var v=document.getElementById('gate-in').value.trim().toLowerCase();
-    if(v==='twinem'){ localStorage.setItem('tdl_ok','1'); g.classList.add('gate-out'); setTimeout(function(){g.remove();},450); var au=document.getElementById('tvaudio'); if(au){au.volume=0.65; au.play().catch(function(){});} }
+    if(v==='twinem'){ localStorage.setItem('tdl_ok','1'); g.classList.add('gate-out'); setTimeout(function(){g.remove();},450); }
     else { g.classList.add('gate-no'); setTimeout(function(){g.classList.remove('gate-no');},500); }
   });
 })();
@@ -69,7 +69,7 @@
         <input id="file" type="file" accept="image/*,video/*" hidden>
         <button class="pixelbtn" id="cam" title="Camera" aria-label="Camera"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M1 4h4l1-2h4l1 2h4v9H1zM8 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg></button>
         <button class="pixelbtn" id="demo" aria-pressed="true" title="Logo loop" aria-label="Logo loop"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4z" /><path d="M8 0l4.5 2.5L8 5.5z"/></svg></button>
-        <button class="pixelbtn" id="sound" aria-pressed="true" title="Sound" aria-label="Sound"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-4v12l-4-4H2z"/><path d="M11 5c2 1.5 2 4.5 0 6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></button>
+        <button class="pixelbtn" id="sound" aria-pressed="false" title="Music" aria-label="Music"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l8-1.6v9.1a2.5 2.5 0 1 1-1.5-2.3V4.2L7.5 5.2v7.3A2.5 2.5 0 1 1 6 10.2z"/></svg></button>
         <button class="pixelbtn" id="orient" title="Orientation" aria-label="Orientation"><svg class="ic-land" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4.5" width="12" height="7" fill="none" stroke="currentColor" stroke-width="2"/></svg><svg class="ic-port" viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="2" width="7" height="12" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
       </div>
       <div class="pixelrow">

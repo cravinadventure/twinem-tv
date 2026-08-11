@@ -434,7 +434,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 }
 /* portrait: the whole chassis becomes a phone */
 .tv.portrait { width: min(430px, 96vw); border-radius: 34px; padding: 16px 14px 12px; }
-.tv.portrait .tv-screen .canvas-wrap { aspect-ratio: 9 / 16; max-height: 64vh; }
+.tv.portrait .tv-screen .canvas-wrap { aspect-ratio: 9 / 16; max-height: 46vh; flex: 0 0 auto; width: auto; margin: 0 auto; }
 .tv.portrait .tv-panel { flex-direction: column; justify-content: center; gap: 14px; padding-top: 14px; }
 .tv.portrait .knobs { gap: 14px; justify-content: center; }
 .tv.portrait .knob { width: 46px; height: 46px; }
