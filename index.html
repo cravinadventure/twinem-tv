@@ -185,5 +185,36 @@
   };
 })();
 </script>
+<script>
+// ---- beat pulse: MIDTONES rides the track's bass, from wherever the knob
+// sits up to 1.50, decaying back between hits ----
+(function(){
+  var au = document.getElementById('tvaudio'), mid = document.getElementById('mid');
+  if (!au || !mid) return;
+  var ctx, analyser, data, base = +mid.value, pulse = 0, avg = 0, self = false;
+  mid.addEventListener('input', function(){ if (!self) base = +mid.value; });
+  function setup(){
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var src = ctx.createMediaElementSource(au);
+    analyser = ctx.createAnalyser(); analyser.fftSize = 256;
+    src.connect(analyser); analyser.connect(ctx.destination);
+    data = new Uint8Array(analyser.frequencyBinCount);
+    tick();
+  }
+  au.addEventListener('play', function(){ setup(); if (ctx.state === 'suspended') ctx.resume(); });
+  function tick(){
+    requestAnimationFrame(tick);
+    analyser.getByteFrequencyData(data);
+    var e = 0; for (var i = 1; i < 8; i++) e += data[i]; e /= 7;
+    avg = avg * 0.95 + e * 0.05;
+    if (e > avg * 1.25 && e > 60 && pulse < 0.3) pulse = 1;
+    pulse *= 0.90;
+    if (au.paused && pulse < 0.02) return;
+    var target = Math.round(base + (150 - base) * pulse);
+    if (target !== +mid.value){ self = true; mid.value = target; mid.dispatchEvent(new Event('input')); self = false; }
+  }
+})();
+</script>
 </body>
 </html>
