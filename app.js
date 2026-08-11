@@ -405,7 +405,10 @@
 
   const orientBtn = $('orient');
   if (orientBtn) {
-    const syncOrient = () => { orientBtn.dataset.orient = S.orient; };
+    const syncOrient = () => {
+      orientBtn.dataset.orient = S.orient;
+      document.querySelector('.tv').classList.toggle('portrait', S.orient === 'port');
+    };
     orientBtn.onclick = () => { S.orient = S.orient === 'port' ? 'land' : 'port'; W = H = 0; syncOrient(); };
     syncOrient();
   }

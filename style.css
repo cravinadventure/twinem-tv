@@ -432,6 +432,17 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
   background: rgba(10,11,14,.82); backdrop-filter: blur(4px);
   border-top: 1px solid rgba(255,255,255,.1);
 }
+/* portrait: the whole chassis becomes a phone */
+.tv.portrait { width: min(430px, 96vw); border-radius: 34px; padding: 16px 14px 12px; }
+.tv.portrait .tv-screen .canvas-wrap { aspect-ratio: 9 / 16; max-height: 64vh; }
+.tv.portrait .tv-panel { flex-direction: column; justify-content: center; gap: 14px; padding-top: 14px; }
+.tv.portrait .knobs { gap: 14px; justify-content: center; }
+.tv.portrait .knob { width: 46px; height: 46px; }
+.tv.portrait .knob .ind::before { top: 4px; height: 12px; }
+.tv.portrait .channels { justify-content: center; }
+.tv.portrait .pixelrow { align-items: center; }
+.tv.portrait .readout-line { flex-wrap: wrap; gap: 10px; justify-content: center; }
+
 @media (max-width: 760px) {
   .tv { padding: 12px; border-radius: 18px; }
   .tv-panel { justify-content: center; }
