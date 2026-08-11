@@ -334,6 +334,7 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 }
 .tv-top { display: flex; justify-content: center; align-items: center; padding: 4px 6px 14px; position: relative; }
 .socials { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; gap: 16px; align-items: center; }
+.socials-left { right: auto; left: 12px; }
 .socials a { color: rgba(238,240,244,.45); display: block; }
 .socials a:hover { color: var(--signal); }
 .socials svg { width: 25px; height: 25px; fill: currentColor; display: block; }
