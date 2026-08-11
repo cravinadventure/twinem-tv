@@ -463,6 +463,7 @@ canvas.smooth { image-rendering: auto; }
 .tv.portrait .channels { justify-content: center; }
 .tv.portrait .pixelrow { align-items: center; }
 .tv.portrait .readout-line { flex-wrap: wrap; gap: 10px; justify-content: center; }
+.tv.portrait .nowplaying { text-align: center; }
 
 @media (max-width: 760px) {
   .tv { padding: 12px; border-radius: 18px; }
