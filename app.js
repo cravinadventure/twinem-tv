@@ -239,7 +239,7 @@
       $('r-res').textContent = `grid: ${W} x ${H}`;
     }
 
-    if (S.mode === 'demo') { fillDemo(lum, W, H, performance.now()); return; }
+    if (S.mode === 'demo') { lum.fill(0); return; }   // black until the loop is ready, never the blob demo
 
     sctx.fillStyle = '#000';
     sctx.fillRect(0, 0, W, H);
@@ -538,10 +538,19 @@
     if (isVideo) {
       video = document.createElement('video');
       video.src = url; video.muted = true; video.playsInline = true; video.loop = true;
-      video.onloadeddata = () => {
+      video.preload = 'auto';
+      let live = false;
+      const ready = () => {
+        if (live || !video.videoWidth) return;
+        live = true;
         setMode('video', label);
-        video.play().catch(() => {});   // everything runs at a flat 30 fps, no detection
+        video.play().catch(() => {});
       };
+      video.onloadeddata = ready;
+      video.oncanplay = ready;
+      // phones lazy-load video: force it, and start muted playback immediately
+      video.load();
+      video.play().then(ready).catch(() => {});
       video.addEventListener('timeupdate', syncTransport);
       video.addEventListener('play', syncTransport);
       video.addEventListener('pause', syncTransport);
