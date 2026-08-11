@@ -334,10 +334,14 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
   padding: 18px 22px 14px;
   color: var(--ink);
 }
-.tv-top { display: flex; justify-content: flex-start; align-items: center; padding: 2px 6px 12px; }
+.tv-top { display: flex; justify-content: center; align-items: center; padding: 4px 6px 14px; }
 .tv-brand { display: flex; align-items: center; gap: 10px; }
-.tv-brand .brandmark { height: 22px; }
-.tv-model { font-size: 11px; letter-spacing: 3px; color: rgba(238,240,244,.55); }
+.tv-brand .brandmark { height: 30px; }
+.tv-model { font-size: 14px; letter-spacing: 4px; color: rgba(238,240,244,.55); }
+.pixelbtn svg { width: 17px; height: 17px; display: block; fill: currentColor; }
+#orient .ic-port { display: none; }
+#orient[data-orient="port"] .ic-land { display: none; }
+#orient[data-orient="port"] .ic-port { display: block; }
 .channels { display: flex; gap: 10px; }
 
 /* chunky 3D pixel buttons */

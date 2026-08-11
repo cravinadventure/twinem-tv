@@ -405,7 +405,7 @@
 
   const orientBtn = $('orient');
   if (orientBtn) {
-    const syncOrient = () => { orientBtn.textContent = S.orient === 'port' ? 'PORT' : 'LAND'; };
+    const syncOrient = () => { orientBtn.dataset.orient = S.orient; };
     orientBtn.onclick = () => { S.orient = S.orient === 'port' ? 'land' : 'port'; W = H = 0; syncOrient(); };
     syncOrient();
   }
@@ -416,7 +416,7 @@
     S.serverPath = serverPath || null;
     if (isVideo) {
       video = document.createElement('video');
-      video.src = url; video.muted = true; video.playsInline = true;
+      video.src = url; video.muted = true; video.playsInline = true; video.loop = true;
       video.onloadeddata = () => {
         setMode('video', label);
         detectFps(video);

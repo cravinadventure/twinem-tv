@@ -65,12 +65,12 @@
         <div class="knobunit"><div class="knob" data-input="thr" data-fmt="dec"><div class="ind"></div></div><b>THRESHOLD</b><i id="k-thr">0.50</i></div>
       </div>
       <div class="channels">
-        <label class="pixelbtn" for="file">FILE</label>
+        <label class="pixelbtn" for="file" title="Load a file"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3h5l2 2h7v8H1z"/></svg></label>
         <input id="file" type="file" accept="image/*,video/*" hidden>
-        <button class="pixelbtn" id="cam">CAM</button>
-        <button class="pixelbtn" id="demo" aria-pressed="true">LOOP</button>
-        <button class="pixelbtn" id="sound" aria-pressed="true">SOUND</button>
-        <button class="pixelbtn" id="orient">LAND</button>
+        <button class="pixelbtn" id="cam" title="Camera" aria-label="Camera"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M1 4h4l1-2h4l1 2h4v9H1zM8 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg></button>
+        <button class="pixelbtn" id="demo" aria-pressed="true" title="Logo loop" aria-label="Logo loop"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3h8v2H2zM10 1l5 3-5 3zM6 11h8v2H6zM6 9l-5 3 5 3z"/></svg></button>
+        <button class="pixelbtn" id="sound" aria-pressed="true" title="Sound" aria-label="Sound"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-4v12l-4-4H2z"/><path d="M11 5c2 1.5 2 4.5 0 6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></button>
+        <button class="pixelbtn" id="orient" title="Orientation" aria-label="Orientation"><svg class="ic-land" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4.5" width="12" height="7" fill="none" stroke="currentColor" stroke-width="2"/></svg><svg class="ic-port" viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="2" width="7" height="12" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
       </div>
       <div class="pixelrow">
         <div class="swatches" id="swatches"></div>
