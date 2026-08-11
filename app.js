@@ -233,7 +233,7 @@
 
   // every lit pixel is the TWINEM sparkle, tinted to the dot color
   const sprite = new Image();
-  sprite.src = 'assets/twinem_pixel.png';
+  sprite.src = 'assets/twinem_pixel.svg';
   let spriteOK = false;
   sprite.onload = () => { spriteOK = true; patFor = ''; };
   const bit = document.createElement('canvas'), bctx = bit.getContext('2d');
