@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TWINEM TV</title>
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 
@@ -37,6 +37,18 @@
 })();
 </script>
 
+<div id="hotline" hidden>
+  <div class="hotline-card">
+    <div class="hotline-title">TWINEM HOTLINE</div>
+    <div class="hotline-line">enter your number, we text you the TV</div>
+    <form id="hotline-form">
+      <input id="hotline-num" type="tel" inputmode="tel" autocomplete="off" placeholder="your number">
+      <button type="submit" class="pixelbtn">TEXT ME</button>
+    </form>
+    <a class="pixelbtn hotline-vcf" href="assets/TWINEM.vcf" download="TWINEM.vcf">SAVE TWINEM TO CONTACTS</a>
+    <button class="hotline-close" id="hotline-close" aria-label="Close">&times;</button>
+  </div>
+</div>
 <audio id="tvaudio" src="assets/twinem_track.mp3" loop preload="auto"></audio>
 <div class="tvroom">
   <div class="tv">
@@ -88,6 +100,7 @@
         <button class="pixelbtn" id="cam" title="Camera" aria-label="Camera"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M1 4h4l1-2h4l1 2h4v9H1zM8 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg></button>
         <button class="pixelbtn" id="demo" aria-pressed="true" title="Logo loop" aria-label="Logo loop"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4z" /><path d="M8 0l4.5 2.5L8 5.5z"/></svg></button>
         <button class="pixelbtn" id="sound" aria-pressed="true" title="Music" aria-label="Music"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l8-1.6v9.1a2.5 2.5 0 1 1-1.5-2.3V4.2L7.5 5.2v7.3A2.5 2.5 0 1 1 6 10.2z"/></svg></button>
+        <button class="pixelbtn" id="call" title="Call TWINEM" aria-label="Call TWINEM"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .7-.2 1l-2.3 2.2z"/></svg></button>
         <button class="pixelbtn" id="rec" title="Record" aria-label="Record"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5"/></svg></button>
       </div>
       <div class="nowplaying" id="nowplaying">&#9834; GIMME WHAT I WANT &middot; TWINEM</div>
@@ -294,6 +307,23 @@
     mr.start(250);
     btn.setAttribute('aria-pressed', 'true'); btn.classList.add('recording');
   };
+})();
+</script>
+<script>
+// ---- hotline: text yourself the TV, or save the contact card ----
+(function(){
+  var btn = document.getElementById('call'), box = document.getElementById('hotline');
+  if (!btn || !box) return;
+  btn.onclick = function(){ box.hidden = false; };
+  document.getElementById('hotline-close').onclick = function(){ box.hidden = true; };
+  box.addEventListener('pointerdown', function(e){ if (e.target === box) box.hidden = true; });
+  document.getElementById('hotline-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var n = document.getElementById('hotline-num').value.replace(/[^+0-9]/g, '');
+    if (!n) return;
+    var body = encodeURIComponent('TWINEM TV \u2661 https://cravinadventure.github.io/twinem-tv/  IG + TikTok: @twinemmusic');
+    location.href = 'sms:' + n + '?&body=' + body;
+  });
 })();
 </script>
 </body>
