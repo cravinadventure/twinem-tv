@@ -243,6 +243,7 @@
   let spriteOK = false;
   sprite.onload = () => { spriteOK = true; patFor = ''; };
   const bit = document.createElement('canvas'), bctx = bit.getContext('2d');
+  const frameC = document.createElement('canvas'), fctx = frameC.getContext('2d');
   const glyph = document.createElement('canvas'), gctx = glyph.getContext('2d');
   let bitImg = null, pat = null, patFor = '';
 
@@ -268,10 +269,9 @@
   function paint() {
     const cell = Math.max(2, Math.min(24, Math.round(1600 / W)));
     const ow = W * cell, oh = H * cell;
-    if (out.width !== ow || out.height !== oh) { out.width = ow; out.height = oh; }
+    if (frameC.width !== ow || frameC.height !== oh) { frameC.width = ow; frameC.height = oh; }
     if (bit.width !== W || bit.height !== H) { bit.width = W; bit.height = H; bitImg = bctx.createImageData(W, H); }
     const d = bitImg.data;
-    out.classList.toggle('smooth', !S.star);
     if (S.star) {
       if (glyph.width !== ow || glyph.height !== oh) { glyph.width = ow; glyph.height = oh; }
       for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
@@ -285,9 +285,9 @@
       gctx.imageSmoothingEnabled = false;
       gctx.drawImage(bit, 0, 0, ow, oh);
       gctx.globalCompositeOperation = 'source-over';
-      octx.fillStyle = S.bgc;
-      octx.fillRect(0, 0, ow, oh);
-      octx.drawImage(glyph, 0, 0);
+      fctx.fillStyle = S.bgc;
+      fctx.fillRect(0, 0, ow, oh);
+      fctx.drawImage(glyph, 0, 0);
     } else {
       // continuous tone, tinted like sepia but in their color (white = plain B&W)
       const fg = hex(S.fgc);
@@ -296,16 +296,28 @@
         d[p] = fg[0] * v; d[p + 1] = fg[1] * v; d[p + 2] = fg[2] * v; d[p + 3] = 255;
       }
       bctx.putImageData(bitImg, 0, 0);
-      octx.imageSmoothingEnabled = true;
-      octx.drawImage(bit, 0, 0, ow, oh);
+      fctx.imageSmoothingEnabled = true;
+      fctx.drawImage(bit, 0, 0, ow, oh);
     }
+    // composite at exact display resolution so TV lines land on whole pixels
+    const wrap = out.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const fit = Math.min(wrap.width / ow, wrap.height / oh) || 1;
+    const dw = Math.max(2, Math.round(ow * fit * dpr)), dh = Math.max(2, Math.round(oh * fit * dpr));
+    if (out.width !== dw || out.height !== dh) {
+      out.width = dw; out.height = dh;
+      out.style.width = (dw / dpr) + 'px';
+      out.style.height = (dh / dpr) + 'px';
+    }
+    octx.imageSmoothingEnabled = true;
+    octx.drawImage(frameC, 0, 0, dw, dh);
     if (S.lines) {
-      // matched to the og TWINEM scanline files: ~100 lines per frame height,
-      // dark band 40% of each period, pure black
-      const period = Math.max(3, Math.round(oh / 100));
+      // og TWINEM geometry: ~100 lines per frame, 40% duty, pure black,
+      // every line identical because we are in real screen pixels here
+      const period = Math.max(3, Math.round(dh / 100));
       const lh = Math.max(1, Math.round(period * 0.4));
       octx.fillStyle = '#000';
-      for (let y = 0; y < oh; y += period) octx.fillRect(0, y, ow, lh);
+      for (let y = 0; y < dh; y += period) octx.fillRect(0, y, ow ? dw : dw, lh);
     }
   }
 
