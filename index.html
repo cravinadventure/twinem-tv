@@ -173,7 +173,8 @@
   var au = document.getElementById('tvaudio'), btn = document.getElementById('sound');
   if (!au) return;
   au.volume = 0.65;
-  function tryStart(){
+  function tryStart(e){
+    if (e.target.closest && e.target.closest('#transport')) return;
     if (au.paused && btn.getAttribute('aria-pressed') === 'true') au.play().catch(function(){});
     document.removeEventListener('pointerdown', tryStart);
   }

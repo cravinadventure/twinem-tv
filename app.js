@@ -381,7 +381,8 @@
     $('r-src').textContent = 'source: ' + label;
     $('demo').setAttribute('aria-pressed', m === 'demo');
     W = H = 0;
-    showTransport(m === 'video' && video && isFinite(video.duration));
+    // the demo loop just loops; transport is only for footage they bring
+    showTransport(m === 'video' && label !== 'logo loop' && video && isFinite(video.duration));
     if (m === 'image') render();
     requestAnimationFrame(sizeLabel);
   }
