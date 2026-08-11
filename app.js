@@ -211,7 +211,9 @@
     else { sw = 960; sh = 540; }
 
     const { cw, ch, cx, cy } = cropRect(sw, sh);
-    const w = Math.max(8, Math.round(cw / S.scale)), h = Math.max(8, Math.round(ch / S.scale));
+    // star mode works on the chunky dither grid; smooth modes stay near source res
+    const div = S.star ? S.scale : Math.max(1, cw / 960);
+    const w = Math.max(8, Math.round(cw / div)), h = Math.max(8, Math.round(ch / div));
     if (w !== W || h !== H) {
       W = w; H = h;
       lum = new Float32Array(W * H);
