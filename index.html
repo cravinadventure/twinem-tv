@@ -126,6 +126,18 @@
 <script>
 // ---- Y2K knobs: proxy drag-rotation onto the hidden range inputs ----
 (function(){
+  // Browsers restore form values across reloads; a TV should always power on
+  // at its factory settings.
+  ['diff','blur','scale','con','mid','thr','hold'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el && el.value !== el.getAttribute('value')) {
+      el.value = el.getAttribute('value');
+      el.dispatchEvent(new Event('input'));
+    }
+  });
+  var inv = document.getElementById('inv');
+  if (inv && inv.checked) { inv.checked = false; inv.dispatchEvent(new Event('change')); }
+
   var FMT = {
     px: function(v){ return v + ' px'; },
     dec: function(v){ return (v/100).toFixed(2); }
