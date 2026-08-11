@@ -82,6 +82,7 @@
   const S = {
     algo: DEFAULT_ALGO, diff: .86, blur: 0, serp: false,
     scale: 1, con: .79, mid: .73, thr: .5, inv: false,
+    orient: matchMedia('(orientation: portrait)').matches ? 'port' : 'land',
     hold: 1, pal: 0, fgc: '#FFFFFF', bgc: '#000000', mode: 'demo', exporting: false
   };
 
@@ -193,13 +194,22 @@
     }
   }
 
+  // center-crop the source to the chosen aspect (16:9 or 9:16)
+  function cropRect(sw, sh) {
+    const ar = S.orient === 'port' ? 9 / 16 : 16 / 9;
+    let cw = sw, ch = sh;
+    if (sw / sh > ar) cw = sh * ar; else ch = sw / ar;
+    return { cw, ch, cx: (sw - cw) / 2, cy: (sh - ch) / 2 };
+  }
+
   function grab() {
     let sw, sh;
     if (S.mode === 'video' && video && video.videoWidth) { sw = video.videoWidth; sh = video.videoHeight; }
     else if (S.mode === 'image' && image) { sw = image.naturalWidth; sh = image.naturalHeight; }
     else { sw = 960; sh = 540; }
 
-    const w = Math.max(8, Math.round(sw / S.scale)), h = Math.max(8, Math.round(sh / S.scale));
+    const { cw, ch, cx, cy } = cropRect(sw, sh);
+    const w = Math.max(8, Math.round(cw / S.scale)), h = Math.max(8, Math.round(ch / S.scale));
     if (w !== W || h !== H) {
       W = w; H = h;
       lum = new Float32Array(W * H);
@@ -213,8 +223,8 @@
 
     if (S.mode === 'demo') { fillDemo(lum, W, H, performance.now()); return; }
 
-    if (S.mirror) { sctx.save(); sctx.scale(-1, 1); sctx.drawImage(video, -W, 0, W, H); sctx.restore(); }
-    else sctx.drawImage(S.mode === 'video' ? video : image, 0, 0, W, H);
+    if (S.mirror) { sctx.save(); sctx.scale(-1, 1); sctx.drawImage(video, cx, cy, cw, ch, -W, 0, W, H); sctx.restore(); }
+    else sctx.drawImage(S.mode === 'video' ? video : image, cx, cy, cw, ch, 0, 0, W, H);
     const d = sctx.getImageData(0, 0, W, H).data;
     for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
       lum[i] = (d[p] * 0.2126 + d[p + 1] * 0.7152 + d[p + 2] * 0.0722) / 255;
@@ -393,6 +403,13 @@
 
   $('demo').onclick = () => { stopCam(); loadURL('assets/twinem_stainless_loop.mp4', 'logo loop', true); };
 
+  const orientBtn = $('orient');
+  if (orientBtn) {
+    const syncOrient = () => { orientBtn.textContent = S.orient === 'port' ? 'PORT' : 'LAND'; };
+    orientBtn.onclick = () => { S.orient = S.orient === 'port' ? 'land' : 'port'; W = H = 0; syncOrient(); };
+    syncOrient();
+  }
+
   function loadURL(url, label, isVideo, serverPath) {
     stopCam();
     S.mirror = false;
@@ -565,8 +582,10 @@
 
   function sizeLabel() {
     const srcW = video && video.videoWidth, srcH = video && video.videoHeight;
+    let sW = srcW, sH = srcH;
+    if (srcW && srcH) { const c = cropRect(srcW, srcH); sW = Math.round(c.cw); sH = Math.round(c.ch); }
     const useSrc = $('outsize').value === 'source';
-    const w = useSrc && srcW ? srcW : W, h = useSrc && srcH ? srcH : H;
+    const w = useSrc && sW ? sW : W, h = useSrc && sH ? sH : H;
     $('v-size').textContent = w && h ? `${w} x ${h}` : '-';
     return { w, h };
   }
