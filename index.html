@@ -192,26 +192,35 @@
 (function(){
   var au = document.getElementById('tvaudio'), mid = document.getElementById('mid');
   if (!au || !mid) return;
-  var ctx, analyser, data, base = +mid.value, pulse = 0, avg = 0, self = false;
+  var ctx = null, analyser = null, data = null, base = +mid.value, pulse = 0, avg = 0, self = false;
   mid.addEventListener('input', function(){ if (!self) base = +mid.value; });
   function setup(){
-    if (ctx) return;
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    var src = ctx.createMediaElementSource(au);
-    analyser = ctx.createAnalyser(); analyser.fftSize = 256;
-    src.connect(analyser); analyser.connect(ctx.destination);
-    data = new Uint8Array(analyser.frequencyBinCount);
-    tick();
+    if (ctx) { if (ctx.state === 'suspended') ctx.resume().catch(function(){}); return; }
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var src = ctx.createMediaElementSource(au);
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.4;
+      src.connect(analyser); analyser.connect(ctx.destination);
+      data = new Uint8Array(analyser.frequencyBinCount);
+      if (ctx.state === 'suspended') ctx.resume().catch(function(){});
+      setInterval(tick, 33);
+    } catch (e) { ctx = null; }
   }
-  au.addEventListener('play', function(){ setup(); if (ctx.state === 'suspended') ctx.resume(); });
+  // build the graph inside a real user gesture, whichever comes first
+  document.addEventListener('pointerdown', setup);
+  document.addEventListener('keydown', setup);
+  au.addEventListener('play', setup);
   function tick(){
-    requestAnimationFrame(tick);
+    if (ctx.state === 'suspended') { ctx.resume().catch(function(){}); return; }
     analyser.getByteFrequencyData(data);
     var e = 0; for (var i = 1; i < 8; i++) e += data[i]; e /= 7;
     avg = avg * 0.95 + e * 0.05;
-    var drive = e > 30 ? Math.max(0, e / (avg + 0.001) - 1.05) * 3.5 : 0;
+    var drive = e > 25 ? Math.max(0, e / (avg + 0.001) - 1.03) * 4 : 0;
     if (drive > pulse) pulse = Math.min(1, drive);
-    pulse *= 0.90;
+    pulse *= 0.88;
+    window.__beat = { e: e, avg: avg, pulse: pulse, state: ctx.state };
     if (au.paused && pulse < 0.02) return;
     var target = Math.round(base + (150 - base) * pulse);
     if (target !== +mid.value){ self = true; mid.value = target; mid.dispatchEvent(new Event('input')); self = false; }
