@@ -518,7 +518,7 @@
   // orientation is automatic: the window's shape decides TV vs MOBILE
   const syncOrient = () => {
     document.querySelector('.tv').classList.toggle('portrait', S.orient === 'port');
-    document.title = S.orient === 'port' ? 'TWINEM MOBILE' : 'TWINEM TV';
+    document.title = 'TWINEM VISUALIZER';
   };
   const followMq = e => { S.orient = e.matches ? 'port' : 'land'; W = H = 0; syncOrient(); };
   const mq = matchMedia('(orientation: portrait)');
