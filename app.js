@@ -415,6 +415,10 @@
       document.title = S.orient === 'port' ? 'TWINEM MOBILE' : 'TWINEM TV';
     };
     orientBtn.onclick = () => { S.orient = S.orient === 'port' ? 'land' : 'port'; W = H = 0; syncOrient(); };
+    // follow the window: rotating the phone or reshaping the window flips the device
+    const mq = matchMedia('(orientation: portrait)');
+    const followMq = e => { S.orient = e.matches ? 'port' : 'land'; W = H = 0; syncOrient(); };
+    if (mq.addEventListener) mq.addEventListener('change', followMq); else mq.addListener(followMq);
     syncOrient();
   }
 
