@@ -419,6 +419,11 @@
     const mq = matchMedia('(orientation: portrait)');
     const followMq = e => { S.orient = e.matches ? 'port' : 'land'; W = H = 0; syncOrient(); };
     if (mq.addEventListener) mq.addEventListener('change', followMq); else mq.addListener(followMq);
+    let rzT = null;
+    addEventListener('resize', () => {
+      clearTimeout(rzT);
+      rzT = setTimeout(() => followMq({ matches: innerHeight > innerWidth }), 120);
+    });
     syncOrient();
   }
 
