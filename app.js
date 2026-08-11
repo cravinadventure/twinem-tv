@@ -213,7 +213,8 @@
 
     if (S.mode === 'demo') { fillDemo(lum, W, H, performance.now()); return; }
 
-    sctx.drawImage(S.mode === 'video' ? video : image, 0, 0, W, H);
+    if (S.mirror) { sctx.save(); sctx.scale(-1, 1); sctx.drawImage(video, -W, 0, W, H); sctx.restore(); }
+    else sctx.drawImage(S.mode === 'video' ? video : image, 0, 0, W, H);
     const d = sctx.getImageData(0, 0, W, H).data;
     for (let i = 0, p = 0; i < lum.length; i++, p += 4) {
       lum[i] = (d[p] * 0.2126 + d[p + 1] * 0.7152 + d[p + 2] * 0.0722) / 255;
@@ -367,6 +368,7 @@
 
   function loadURL(url, label, isVideo, serverPath) {
     stopCam();
+    S.mirror = false;
     S.serverPath = serverPath || null;
     if (isVideo) {
       video = document.createElement('video');
@@ -423,6 +425,7 @@
       video = document.createElement('video');
       video.srcObject = stream; video.muted = true; video.playsInline = true;
       await video.play();
+      S.mirror = true;   // selfie view: mirror like a mirror
       setMode('video', 'webcam');
     } catch (err) {
       $('r-src').textContent = 'source: webcam blocked. check browser permissions.';
