@@ -594,11 +594,16 @@
   $('cam').onclick = async () => {
     try {
       stopCam();
-      stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
+      // phones open the world-facing camera; laptops the front one
+      const phone = matchMedia('(pointer: coarse)').matches;
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 1280, height: 720, facingMode: phone ? { ideal: 'environment' } : 'user' }
+      });
       video = document.createElement('video');
       video.srcObject = stream; video.muted = true; video.playsInline = true;
       await video.play();
-      S.mirror = true;   // selfie view: mirror like a mirror
+      const facing = stream.getVideoTracks()[0].getSettings?.().facingMode;
+      S.mirror = facing !== 'environment';   // mirror only the selfie view
       setMode('video', 'webcam');
     } catch (err) {
       $('r-src').textContent = 'source: webcam blocked. check browser permissions.';

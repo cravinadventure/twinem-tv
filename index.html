@@ -94,11 +94,11 @@
         </div>
       </div>
       <div class="channels">
+        <button class="pixelbtn" id="sound" aria-pressed="true" title="Music" aria-label="Music"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l8-1.6v9.1a2.5 2.5 0 1 1-1.5-2.3V4.2L7.5 5.2v7.3A2.5 2.5 0 1 1 6 10.2z"/></svg></button>
+        <button class="pixelbtn" id="demo" aria-pressed="true" title="Logo loop" aria-label="Logo loop"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4z" /><path d="M8 0l4.5 2.5L8 5.5z"/></svg></button>
         <label class="pixelbtn" for="file" title="Load a file"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3h5l2 2h7v8H1z"/></svg></label>
         <input id="file" type="file" accept="image/*,video/*" hidden>
         <button class="pixelbtn" id="cam" title="Camera" aria-label="Camera"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M1 4h4l1-2h4l1 2h4v9H1zM8 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg></button>
-        <button class="pixelbtn" id="demo" aria-pressed="true" title="Logo loop" aria-label="Logo loop"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4z" /><path d="M8 0l4.5 2.5L8 5.5z"/></svg></button>
-        <button class="pixelbtn" id="sound" aria-pressed="true" title="Music" aria-label="Music"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l8-1.6v9.1a2.5 2.5 0 1 1-1.5-2.3V4.2L7.5 5.2v7.3A2.5 2.5 0 1 1 6 10.2z"/></svg></button>
         <button class="pixelbtn" id="rec" title="Record" aria-label="Record"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5"/></svg></button>
       </div>
       <a class="nowplaying" id="nowplaying" href="https://soundcloud.com/twinem-658950817/gimme-what-i-want" target="_blank" rel="noopener" title="Hear it on SoundCloud">&#9834; TWINEM - GIMME WHAT I WANT</a>
@@ -149,7 +149,7 @@
     <div class="note" id="export-note"></div></div>
 </div>
 
-<script src="app.js?v=23"></script>
+<script src="app.js?v=24"></script>
 <script>
 // ---- Y2K knobs: proxy drag-rotation onto the hidden range inputs ----
 (function(){
@@ -201,14 +201,14 @@
   if (!au) return;
   au.volume = 0.65;
   au.load();                                   // start fetching the track right now
-  au.play().catch(function(){});               // if the browser allows it, music is instant
   function tryStart(e){
     if (e.target.closest && e.target.closest('#transport')) return;
     if (au.paused && btn.getAttribute('aria-pressed') === 'true') au.play().catch(function(){});
     document.removeEventListener('pointerdown', tryStart);
+    document.removeEventListener('keydown', tryStart);
   }
-  document.addEventListener('pointerdown', tryStart, true);
-  document.addEventListener('keydown', tryStart, true);
+  document.addEventListener('pointerdown', tryStart);
+  document.addEventListener('keydown', tryStart);
   btn.onclick = function(){
     var on = btn.getAttribute('aria-pressed') === 'true';
     if (on) { au.pause(); btn.setAttribute('aria-pressed','false'); }
@@ -245,9 +245,9 @@
     } catch (e) { ctx = null; }
   }
   window.__tvAudioSetup = setup;
-  // build the graph inside a real user gesture, whichever comes first
-  document.addEventListener('pointerdown', setup);
-  document.addEventListener('keydown', setup);
+  // build the graph inside the gesture, in CAPTURE phase so it exists before play starts
+  document.addEventListener('pointerdown', setup, true);
+  document.addEventListener('keydown', setup, true);
   au.addEventListener('play', setup);
   function tick(){
     if (ctx.state === 'suspended') { ctx.resume().catch(function(){}); return; }
