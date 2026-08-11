@@ -149,7 +149,7 @@
     <div class="note" id="export-note"></div></div>
 </div>
 
-<script src="app.js?v=24"></script>
+<script src="app.js?v=25"></script>
 <script>
 // ---- Y2K knobs: proxy drag-rotation onto the hidden range inputs ----
 (function(){
@@ -210,9 +210,10 @@
   document.addEventListener('pointerdown', tryStart);
   document.addEventListener('keydown', tryStart);
   btn.onclick = function(){
-    var on = btn.getAttribute('aria-pressed') === 'true';
-    if (on) { au.pause(); btn.setAttribute('aria-pressed','false'); }
-    else { btn.setAttribute('aria-pressed','true'); au.play().catch(function(){}); }
+    var g = window.__tvAudioGraph;
+    if (g && g.ctx.state === 'suspended') g.ctx.resume().catch(function(){});
+    if (au.paused) { btn.setAttribute('aria-pressed', 'true'); au.play().catch(function(){}); }
+    else { au.pause(); btn.setAttribute('aria-pressed', 'false'); }
   };
   var np = document.getElementById('nowplaying');
   if (np) {
@@ -272,9 +273,11 @@
 (function(){
   var btn = document.getElementById('rec'), canvas = document.getElementById('out');
   if (!btn || !canvas) return;
-  var mr = null, chunks = [];
+  var mr = null, chunks = [], musicWasOn = false;
+  var tvAu = document.getElementById('tvaudio');
   btn.onclick = function(){
     if (mr) { mr.stop(); return; }
+    musicWasOn = tvAu && !tvAu.paused;
     if (window.__tvAudioSetup) window.__tvAudioSetup();
     var stream = canvas.captureStream(30);
     var g = window.__tvAudioGraph;
@@ -301,6 +304,12 @@
       setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
       mr = null;
       btn.setAttribute('aria-pressed', 'false'); btn.classList.remove('recording');
+      // saving can pause the track (share sheet, download focus steal): bring it back
+      setTimeout(function(){
+        var g = window.__tvAudioGraph;
+        if (g && g.ctx.state === 'suspended') g.ctx.resume().catch(function(){});
+        if (musicWasOn && tvAu && tvAu.paused) tvAu.play().catch(function(){});
+      }, 400);
     };
     mr.start(250);
     btn.setAttribute('aria-pressed', 'true'); btn.classList.add('recording');
