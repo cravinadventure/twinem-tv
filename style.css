@@ -335,13 +335,6 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
   color: var(--ink);
   position: relative;
 }
-.tv::before {
-  content: ""; position: absolute; inset: 0; border-radius: inherit;
-  background: url('assets/twinem_bg_tile.png') repeat 0 0 / 176px 84px;
-  opacity: .05;
-  pointer-events: none;
-}
-.tv > * { position: relative; }
 .tv-top { display: flex; justify-content: center; align-items: center; padding: 4px 6px 14px; position: relative; }
 .socials { position: absolute; right: 10px; top: 2px; display: flex; gap: 14px; }
 .socials a { color: rgba(238,240,244,.45); display: block; }
