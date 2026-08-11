@@ -150,7 +150,7 @@
     <div class="note" id="export-note"></div></div>
 </div>
 
-<script src="app.js?v=26"></script>
+<script src="app.js?v=27"></script>
 <script>
 // ---- Y2K knobs: proxy drag-rotation onto the hidden range inputs ----
 (function(){
@@ -274,11 +274,21 @@
 (function(){
   var btn = document.getElementById('rec'), canvas = document.getElementById('out');
   if (!btn || !canvas) return;
-  var mr = null, chunks = [], musicWasOn = false;
+  var mr = null, chunks = [], musicWasOn = false, recVid = null;
   var tvAu = document.getElementById('tvaudio');
   btn.onclick = function(){
     if (mr) { mr.stop(); return; }
     musicWasOn = tvAu && !tvAu.paused;
+    // a loaded FILE video records as a take: restart it, capture live effect
+    // changes, auto-stop at its end (loop and camera record freely)
+    var now = window.__tvNow || {};
+    recVid = (now.mode === 'video' && now.video && now.label !== 'logo loop' && now.label !== 'webcam') ? now.video : null;
+    if (recVid) {
+      recVid.loop = false;
+      recVid.onended = function(){ if (mr) mr.stop(); };
+      recVid.currentTime = 0;
+      recVid.play().catch(function(){});
+    }
     if (window.__tvAudioSetup) window.__tvAudioSetup();
     var stream = canvas.captureStream(30);
     var g = window.__tvAudioGraph;
@@ -304,6 +314,7 @@
       a.click();
       setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
       mr = null;
+      if (recVid) { recVid.onended = null; recVid.loop = true; recVid.play().catch(function(){}); recVid = null; }
       btn.setAttribute('aria-pressed', 'false'); btn.classList.remove('recording');
       // saving can pause the track (share sheet, download focus steal): bring it back
       setTimeout(function(){

@@ -498,6 +498,7 @@
 
   function setMode(m, label) {
     S.mode = m;
+    window.__tvNow = { mode: m, label: label, video: video };
     $('r-src').textContent = 'source: ' + label;
     // source buttons latch: exactly one of LOOP / CAM / FILE stays pressed
     $('demo').setAttribute('aria-pressed', label === 'logo loop');
