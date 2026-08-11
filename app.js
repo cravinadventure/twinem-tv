@@ -353,7 +353,7 @@
     });
   }
   buildColorRow('DOTS', FG_OPTS, 'fgc', 'bgc');
-  buildColorRow('SCREEN', BG_OPTS, 'bgc', 'fgc');
+
   syncColorRows();
 
   PRESETS.forEach(([name, p, note]) => {
@@ -407,25 +407,20 @@
 
   $('demo').onclick = () => { stopCam(); loadURL('assets/twinem_stainless_loop.mp4', 'logo loop', true); };
 
-  const orientBtn = $('orient');
-  if (orientBtn) {
-    const syncOrient = () => {
-      orientBtn.dataset.orient = S.orient;
-      document.querySelector('.tv').classList.toggle('portrait', S.orient === 'port');
-      document.title = S.orient === 'port' ? 'TWINEM MOBILE' : 'TWINEM TV';
-    };
-    orientBtn.onclick = () => { S.orient = S.orient === 'port' ? 'land' : 'port'; W = H = 0; syncOrient(); };
-    // follow the window: rotating the phone or reshaping the window flips the device
-    const mq = matchMedia('(orientation: portrait)');
-    const followMq = e => { S.orient = e.matches ? 'port' : 'land'; W = H = 0; syncOrient(); };
-    if (mq.addEventListener) mq.addEventListener('change', followMq); else mq.addListener(followMq);
-    let rzT = null;
-    addEventListener('resize', () => {
-      clearTimeout(rzT);
-      rzT = setTimeout(() => followMq({ matches: innerHeight > innerWidth }), 120);
-    });
-    syncOrient();
-  }
+  // orientation is automatic: the window's shape decides TV vs MOBILE
+  const syncOrient = () => {
+    document.querySelector('.tv').classList.toggle('portrait', S.orient === 'port');
+    document.title = S.orient === 'port' ? 'TWINEM MOBILE' : 'TWINEM TV';
+  };
+  const followMq = e => { S.orient = e.matches ? 'port' : 'land'; W = H = 0; syncOrient(); };
+  const mq = matchMedia('(orientation: portrait)');
+  if (mq.addEventListener) mq.addEventListener('change', followMq); else mq.addListener(followMq);
+  let rzT = null;
+  addEventListener('resize', () => {
+    clearTimeout(rzT);
+    rzT = setTimeout(() => followMq({ matches: innerHeight > innerWidth }), 120);
+  });
+  syncOrient();
 
   function loadURL(url, label, isVideo, serverPath) {
     stopCam();

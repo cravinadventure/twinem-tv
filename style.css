@@ -342,9 +342,6 @@ button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 #rec svg { fill: #ff2b46; }
 .pixelbtn.recording svg { animation: recblink 1s steps(2, start) infinite; }
 @keyframes recblink { 50% { opacity: .35; } }
-#orient .ic-port { display: none; }
-#orient[data-orient="port"] .ic-land { display: none; }
-#orient[data-orient="port"] .ic-port { display: block; }
 .channels { display: flex; gap: 10px; }
 
 /* chunky 3D pixel buttons */
